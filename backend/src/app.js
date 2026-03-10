@@ -25,10 +25,11 @@ app.use(cors({
     if (!origin || allowedOrigins.includes(origin)
       || /^https?:\/\/192\.168\./.test(origin)
       || /^https?:\/\/10\./.test(origin)
-      || /^https?:\/\/172\./.test(origin)) {
+      || /^https?:\/\/172\./.test(origin)
+      || (process.env.NODE_ENV === 'production' && !origin)) {
       cb(null, true);
     } else {
-      cb(new Error('Not allowed by CORS'));
+      cb(null, false);
     }
   },
   credentials: true,

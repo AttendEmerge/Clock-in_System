@@ -1,0 +1,32 @@
+services:
+  - type: web
+    name: clockin-system
+    runtime: node
+    plan: free
+    buildCommand: >
+      cd frontend && npm install && npm run build &&
+      cd ../backend && npm install --production
+    startCommand: node backend/server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DB_HOST
+        sync: false
+      - key: DB_PORT
+        sync: false
+      - key: DB_USER
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: DB_NAME
+        sync: false
+      - key: DB_SSL
+        value: "true"
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: 8h
+      - key: QR_ROTATION_MINUTES
+        value: "5"
+      - key: TOKEN_EXPIRY_MINUTES
+        value: "60"

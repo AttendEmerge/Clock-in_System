@@ -1,5 +1,6 @@
 require('dotenv').config();
 const express = require('express');
+const path = require('path');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 
@@ -47,8 +48,17 @@ app.use('/api/hr',         hrRoutes);
 // Health check
 app.get('/api/health', (_req, res) => res.json({ status: 'ok', timestamp: new Date() }));
 
-// 404
-app.use((_req, res) => res.status(404).json({ error: 'Route not found' }));
+// 404 for unknown /api routes only
+app.all('/api/*', (_req, res) => res.status(404).json({ error: 'Route not found' }));
+
+// In production, serve the built React frontend
+if (process.env.NODE_ENV === 'production') {
+  const frontendDist = path.join(__dirname, '../../frontend/dist');
+  app.use(express.static(frontendDist));
+  app.get('*', (_req, res) => {
+    res.sendFile(path.join(frontendDist, 'index.html'));
+  });
+}
 
 // Global error handler
 app.use((err, _req, res, _next) => {

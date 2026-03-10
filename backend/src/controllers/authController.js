@@ -6,6 +6,7 @@ const pool = require('../db/pool');
 const ACCESS_EXPIRES = process.env.JWT_EXPIRES_IN || '1h';
 const REMEMBER_DAYS  = 30;
 const SESSION_DAYS   = 1;  // non-remember session lasts 1 day (browser-close fallback)
+const IS_PROD        = process.env.NODE_ENV === 'production';
 
 function buildPayload(user) {
   return {
@@ -51,7 +52,7 @@ async function login(req, res) {
     res.cookie('refresh_token', refreshId, {
       httpOnly: true,
       sameSite: 'lax',
-      secure:   false,   // set to true behind HTTPS in production
+      secure:   IS_PROD,
       maxAge:   remember_me ? days * 24 * 60 * 60 * 1000 : undefined,
       path:     '/',
     });

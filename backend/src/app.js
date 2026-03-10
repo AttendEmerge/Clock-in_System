@@ -49,13 +49,13 @@ app.use('/api/hr',         hrRoutes);
 app.get('/api/health', (_req, res) => res.json({ status: 'ok', timestamp: new Date() }));
 
 // 404 for unknown /api routes only
-app.all('/api/*', (_req, res) => res.status(404).json({ error: 'Route not found' }));
+app.all('/api/{*path}', (_req, res) => res.status(404).json({ error: 'Route not found' }));
 
 // In production, serve the built React frontend
 if (process.env.NODE_ENV === 'production') {
   const frontendDist = path.join(__dirname, '../../frontend/dist');
   app.use(express.static(frontendDist));
-  app.get('*', (_req, res) => {
+  app.get('{*path}', (_req, res) => {
     res.sendFile(path.join(frontendDist, 'index.html'));
   });
 }

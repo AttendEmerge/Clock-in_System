@@ -18,7 +18,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [token,     setToken]     = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // On mount: try to restore session via refresh token cookie
+  // On mount: try to restore session via refresh token cookie.
+  // 401 here is expected when the user has no session (first visit or logged out); we then show the login page.
   useEffect(() => {
     (async () => {
       try {

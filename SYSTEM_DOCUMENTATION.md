@@ -480,7 +480,7 @@ When an API call returns 401 (token expired):
 
 ### 6.4 Session Restore on Page Load
 
-When the app first loads, `AuthContext` sends a refresh request. If the cookie is valid, the user is automatically logged in. Otherwise, they see the login page.
+When the app first loads, `AuthContext` sends a refresh request. If the cookie is valid, the user is automatically logged in. Otherwise, they see the login page. If there is no refresh cookie (e.g. first visit), the backend returns 401—this is expected, and the browser may log it in the console or Network tab; it is not an error.
 
 ### 6.5 Logout
 

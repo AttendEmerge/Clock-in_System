@@ -299,6 +299,7 @@ See **SYSTEM_DOCUMENTATION.md** Section 6 (Authentication Flow) and Section 15.7
 - **Phone on LAN:** For QR clock-in from a phone, the phone must reach the dev server (e.g. https://192.168.x.x:5173). Firewall rules may be needed (see GETTING_STARTED.md); accept the self-signed cert on the phone.
 - **Leave types:** After migration 008, leave types are dynamic (VARCHAR); frontend types may still list fixed strings (e.g. `'paid'|'sick'|...`). Extend TypeScript types when adding new leave types.
 - **Single work schedule:** The system has one global work schedule (one row in `work_schedule`). Per-department or per-location schedules would require schema and logic changes.
+- **401 on first load:** When opening the app (e.g. the login page), the frontend calls `POST /api/auth/refresh` to restore any existing session. If the user has no cookie (first visit or logged out), the backend returns 401. This is expected; the app then shows the login form. You may see "POST .../api/auth/refresh 401 (Unauthorized)" in the browser console or Network tab—this is normal and not an error.
 
 ---
 

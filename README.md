@@ -100,6 +100,8 @@ After running the seed file:
 | `QR_ROTATION_MINUTES` | How often QR rotates (default: 5) |
 | `TOKEN_EXPIRY_MINUTES` | One-time token expiry (default: 60) |
 | `FRONTEND_URL` | Frontend origin for CORS and links in emails (default: http://localhost:5173) |
-| `SMTP_HOST` / `SMTP_PORT` / `SMTP_SECURE` | SMTP server settings for sending emails (password reset) |
+| `RESEND_API_KEY` | (Recommended on Render) Resend.com API key for password-reset emails; avoids blocked SMTP ports. |
+| `RESEND_FROM_EMAIL` | Optional. From address for Resend (e.g. `Clock-in <onboarding@resend.dev>`). |
+| `SMTP_HOST` / `SMTP_PORT` / `SMTP_SECURE` | Alternative: SMTP server for emails (often blocked on Render — use Resend instead). |
 | `SMTP_USER` / `SMTP_PASS` | SMTP credentials |
-| `SMTP_FROM_EMAIL` | From address for outbound emails (e.g. no-reply@yourcompany.com) |
+| `SMTP_FROM_EMAIL` | From address when using SMTP (e.g. no-reply@yourcompany.com) |

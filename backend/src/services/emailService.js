@@ -2,6 +2,11 @@ const nodemailer = require('nodemailer');
 
 let transporter = null;
 
+/** Prefer Resend (HTTP API) when RESEND_API_KEY is set — works on Render where SMTP ports are often blocked. */
+function useResend() {
+  return !!process.env.RESEND_API_KEY;
+}
+
 function getTransporter() {
   if (transporter) return transporter;
 
@@ -14,9 +19,15 @@ function getTransporter() {
     SMTP_FROM_EMAIL,
   } = process.env;
 
-  if (!SMTP_HOST || !SMTP_PORT || !SMTP_USER || !SMTP_PASS || !SMTP_FROM_EMAIL) {
+  const missing = [];
+  if (!SMTP_HOST) missing.push('SMTP_HOST');
+  if (!SMTP_PORT) missing.push('SMTP_PORT');
+  if (!SMTP_USER) missing.push('SMTP_USER');
+  if (!SMTP_PASS) missing.push('SMTP_PASS');
+  if (!SMTP_FROM_EMAIL) missing.push('SMTP_FROM_EMAIL');
+  if (missing.length > 0) {
     console.warn(
-      '[emailService] SMTP configuration is incomplete. Emails will not be sent.'
+      '[emailService] SMTP configuration incomplete. Missing:', missing.join(', '), '- emails will not be sent via SMTP.'
     );
     return null;
   }
@@ -34,12 +45,39 @@ function getTransporter() {
   return transporter;
 }
 
+async function sendViaResend({ to, subject, html, text }) {
+  const apiKey = process.env.RESEND_API_KEY;
+  const from = process.env.RESEND_FROM_EMAIL || process.env.SMTP_FROM_EMAIL || 'Clock-in System <onboarding@resend.dev>';
+  const res = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      from,
+      to: [to],
+      subject,
+      html: html || text,
+      text: text || undefined,
+    }),
+  });
+  if (!res.ok) {
+    const errBody = await res.text();
+    throw new Error(`Resend API ${res.status}: ${errBody}`);
+  }
+}
+
 async function sendEmail({ to, subject, html, text }) {
+  if (useResend()) {
+    await sendViaResend({ to, subject, html, text });
+    return;
+  }
+
   const tx = getTransporter();
   if (!tx) {
-    // In development without SMTP, just log and return.
     console.log(
-      '[emailService] Skipping email send because SMTP is not configured.',
+      '[emailService] Skipping email send: no RESEND_API_KEY and SMTP not configured.',
       { to, subject }
     );
     return;

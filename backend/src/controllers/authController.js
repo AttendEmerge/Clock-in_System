@@ -210,7 +210,8 @@ async function forgotPassword(req, res) {
       await sendPasswordResetEmail(user, resetLink);
     } catch (emailErr) {
       // Log but do not reveal transport errors to the client.
-      console.error('Password reset email error:', emailErr);
+      console.error('Password reset email error:', emailErr.message || emailErr);
+      if (emailErr.response) console.error('SMTP response:', emailErr.response);
     }
 
     return res.json({ message: genericMessage });

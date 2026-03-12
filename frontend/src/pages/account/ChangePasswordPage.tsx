@@ -1,4 +1,5 @@
-import { FormEvent, useState } from 'react';
+import type { FormEvent } from 'react';
+import { useState } from 'react';
 import Layout from '../../components/Layout';
 import { changePassword } from '../../services/api';
 

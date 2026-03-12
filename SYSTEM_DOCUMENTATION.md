@@ -123,6 +123,7 @@ Clock-in_System/
 ├── backend/
 │   ├── .env.example              # Environment variable template
 │   ├── .env                      # Actual config (not committed)
+│   ├── server.js                 # Entry point (starts Express; requires ./src/app)
 │   ├── package.json
 │   ├── migrations/               # SQL migration files (run in order)
 │   │   ├── 001_create_tables.sql
@@ -134,7 +135,6 @@ Clock-in_System/
 │   │   ├── 007_token_requests.sql
 │   │   └── 008_dynamic_leaves_and_holidays.sql
 │   └── src/
-│       ├── index.js              # Entry point (starts Express)
 │       ├── app.js                # Express app setup, CORS, routes
 │       ├── db/
 │       │   └── pool.js           # MySQL connection pool
@@ -1040,7 +1040,7 @@ PM2 keeps the backend running and restarts it on crashes or server reboot.
 sudo npm install -g pm2
 
 cd /var/www/clockin/backend
-pm2 start src/index.js --name clockin-api
+pm2 start server.js --name clockin-api
 pm2 save
 pm2 startup    # follow the printed instructions
 ```

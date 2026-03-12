@@ -4,6 +4,8 @@ A full-stack employee clock-in system with QR scanning, GPS location validation,
 
 **New to the project?** See **[GETTING_STARTED.md](GETTING_STARTED.md)** for a full step-by-step setup guide (installing Node.js and MySQL, creating the database, configuring the backend, and running the app).
 
+**Handing off or onboarding a new team?** See **[docs/HANDOFF_DOCUMENTATION.md](docs/HANDOFF_DOCUMENTATION.md)** for in-depth handoff documentation (architecture, where to add features, conventions, and operations).
+
 ## Tech Stack
 - **Frontend:** React + Vite + TypeScript + Tailwind CSS
 - **Backend:** Node.js + Express

@@ -37,22 +37,46 @@ export default function MobileClockInPage() {
   const [gpsCoords, setGpsCoords] = useState<Coords | null>(null);
   const coordsRef = useRef<Coords | null>(null);   // stable ref for use inside callbacks
 
-  // ── On mount: check QR token + existing session ───────────────────────────
+  // ── On mount: check QR token + validate any existing mobile session ───────
   useEffect(() => {
     if (!qrToken) {
       setStep('error');
       setErrorMsg('Invalid QR code. Please ask HR to generate a new one.');
       return;
     }
+
     const storedToken = localStorage.getItem('mobile_token');
     const storedUser  = localStorage.getItem('mobile_user');
+
     if (storedToken && storedUser) {
+      let user: { name?: string } | null = null;
       try {
-        const user = JSON.parse(storedUser);
-        setJwt(storedToken);
-        setUserName(user.name);
-        setStep('ready');
-      } catch { setStep('login'); }
+        user = JSON.parse(storedUser);
+      } catch {
+        // Corrupt data – clear and force login
+        localStorage.removeItem('mobile_token');
+        localStorage.removeItem('mobile_user');
+        setStep('login');
+        return;
+      }
+
+      // Validate the cached token against /api/auth/me so we don't silently use
+      // an expired or invalid JWT and then fail at clock-in time.
+      (async () => {
+        try {
+          const res = await fetch('/api/auth/me', {
+            headers: { Authorization: `Bearer ${storedToken}` },
+          });
+          if (!res.ok) throw new Error();
+          setJwt(storedToken);
+          setUserName(user?.name || '');
+          setStep('ready');
+        } catch {
+          localStorage.removeItem('mobile_token');
+          localStorage.removeItem('mobile_user');
+          setStep('login');
+        }
+      })();
     } else {
       setStep('login');
     }
@@ -140,7 +164,21 @@ export default function MobileClockInPage() {
         body:    JSON.stringify({ qr_token: qrToken, latitude: pos?.latitude ?? null, longitude: pos?.longitude ?? null, accuracy: pos?.accuracy ?? null }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Clock-in failed');
+
+      // If the backend says our JWT is invalid/expired, clear the mobile
+      // session and send the user back to the login step with an explanation.
+      if (!res.ok && res.status === 401) {
+        localStorage.removeItem('mobile_token');
+        localStorage.removeItem('mobile_user');
+        setErrorMsg(data.error || 'Your session expired. Please sign in again to clock in.');
+        setStep('login');
+        return;
+      }
+
+      if (!res.ok) {
+        throw new Error(data.error || 'Clock-in failed');
+      }
+
       setSuccessMsg(data.message || 'Clocked in successfully!');
       setIsFlagged(!!data.is_flagged);
       setFlagReason(data.flag_reason || '');

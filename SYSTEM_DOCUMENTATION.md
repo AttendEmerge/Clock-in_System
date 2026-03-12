@@ -273,7 +273,8 @@ Every clock-in and clock-out is a row here.
 | method | ENUM('qr','token','auto_checkout') | How they clocked in |
 | is_overtime | TINYINT(1) | Whether this was an overtime clock-in |
 | is_flagged | TINYINT(1) | Whether this event was flagged |
-| flag_reason | VARCHAR(255) | e.g. "UNEXPECTED_LOCATION", "LATE_ARRIVAL" |
+| flag_reason | VARCHAR(255) | e.g. "UNEXPECTED_LOCATION", "LATE_ARRIVAL", "EARLY_DEPARTURE" |
+| early_departure_reason | TEXT | Employee-provided reason when leaving significantly before end of day |
 | is_unflagged | TINYINT(1) | HR dismissed the flag |
 | unflagged_by | INT | FK → users(id) |
 | unflagged_at | TIMESTAMP | When it was unflagged |
@@ -511,7 +512,7 @@ Base URL: `/api`
 | GET | `/clock/qr-session` | Get current QR code (base64 image + expiry). |
 | POST | `/clock/qr` | Clock in via QR. Body: `qr_token`, optional `latitude`, `longitude`, `accuracy`. Blocked on holidays. |
 | POST | `/clock/token` | Clock in via one-time token. Body: `token`, optional coords. Blocked on holidays (except overtime tokens). |
-| POST | `/clock/out` | Manual clock out. |
+| POST | `/clock/out` | Manual clock out. Body (optional): `early_departure_reason` when leaving significantly before end of day. |
 | GET | `/clock/status` | Current status: clocked in/out, today's events, total minutes. |
 | GET | `/clock/history` | Paginated clock history. Query: `page`, `limit`, `from`, `to`. |
 
@@ -887,6 +888,7 @@ Migrations are plain SQL files run in order. Each is designed to be run exactly 
 | `006_gps_accuracy.sql` | Adds gps_accuracy column to clock_events. |
 | `007_token_requests.sql` | Creates token_requests table for employee-initiated token requests. |
 | `008_dynamic_leaves_and_holidays.sql` | Changes leave_type columns from ENUM to VARCHAR(50) for custom types, adds gender_applicable to policies, creates holidays table. |
+| `009_early_departures.sql` | Adds `early_departure_reason` column to clock_events for recording reasons when staff leave significantly before end of day. |
 
 **How to run a migration (PowerShell):**
 

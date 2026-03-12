@@ -173,7 +173,8 @@ Use these as “real situations we support” to make the system concrete.
 ### 4.7 Something Unusual (Late, Wrong Location, Dispute)
 
 - If someone clocks in **late** (after grace period) or **outside any approved location**, the event can be **automatically flagged** (e.g. “LATE_ARRIVAL”, “UNEXPECTED_LOCATION”).
-- **HR** sees a **Flags** list, can review, **dismiss** the flag, or optionally **add the location** as acceptable (e.g. new site).
+- If someone **leaves significantly earlier than the normal end of day**, the system can **record an early departure** with a short reason from the employee, and flag it for review.
+- **HR** sees a **Flags** list, can review, **dismiss** the flag, optionally **add the location** as acceptable (e.g. new site), and see any **early-departure reasons** provided by staff.
 - Full **clock history** (who, when, where, method) is available for investigations or disputes.
 
 **Message:** We have visibility and a process for exceptions, not just “normal” days.

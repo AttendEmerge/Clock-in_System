@@ -53,6 +53,10 @@ export default function EmployeeDashboardPage() {
   const [actionMsg, setActionMsg] = useState('');
   const [actionError, setActionError] = useState('');
 
+  // Early departure modal
+  const [showEarlyModal, setShowEarlyModal] = useState(false);
+  const [earlyReason, setEarlyReason] = useState('');
+
   useEffect(() => {
     fetchAll();
   }, []);
@@ -174,9 +178,21 @@ export default function EmployeeDashboardPage() {
   // ── Clock out ─────────────────────────────────────────────────────────────
 
   async function handleClockOut() {
+    setActionError('');
+    setActionMsg('');
+    setEarlyReason('');
+    setShowEarlyModal(true);
+  }
+
+  async function confirmEarlyDeparture() {
     try {
-      await clockOut();
-      setActionMsg('Clocked out successfully.');
+      const reason = earlyReason.trim();
+      const res = await clockOut(reason || undefined);
+      setActionMsg(res.is_early_departure
+        ? 'Clocked out early. Your reason has been recorded.'
+        : 'Clocked out successfully.');
+      setShowEarlyModal(false);
+      setEarlyReason('');
       fetchAll();
     } catch (e: any) {
       setActionError(e.response?.data?.error || 'Clock-out failed.');
@@ -598,6 +614,48 @@ export default function EmployeeDashboardPage() {
               Submit Request
             </button>
           </form>
+        </Modal>
+      )}
+
+      {/* ── Early Departure Modal ─────────────────────────────────────────── */}
+      {showEarlyModal && (
+        <Modal title="Clock Out" onClose={() => setShowEarlyModal(false)} size="sm">
+          <div className="space-y-4">
+            <p className="text-sm text-gray-600">
+              If you are leaving significantly earlier than your normal end time, please share a short reason.
+              This helps your supervisor and HR understand and plan around early departures.
+            </p>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Reason (optional)</label>
+              <textarea
+                value={earlyReason}
+                onChange={e => setEarlyReason(e.target.value)}
+                rows={3}
+                maxLength={1000}
+                placeholder="E.g. medical appointment, family emergency, study commitment..."
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+              />
+              <p className="mt-1 text-xs text-gray-400">
+                This note is visible to your supervisor and HR only.
+              </p>
+            </div>
+            <div className="flex gap-2 justify-end">
+              <button
+                type="button"
+                onClick={() => setShowEarlyModal(false)}
+                className="px-3 py-2 rounded-lg text-sm border border-gray-300 text-gray-600 hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={confirmEarlyDeparture}
+                className="px-4 py-2 rounded-lg text-sm bg-red-500 text-white hover:bg-red-600"
+              >
+                Confirm Clock Out
+              </button>
+            </div>
+          </div>
         </Modal>
       )}
     </Layout>

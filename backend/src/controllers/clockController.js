@@ -174,17 +174,69 @@ async function clockInToken(req, res) {
 }
 
 /**
+ * Helper — determine if a manual clock-out should be treated as an early departure.
+ * We consider it early if the employee clocks out significantly before expected_end.
+ */
+async function isEarlyDeparture(clockOutTime) {
+  try {
+    const [schedRows] = await pool.query('SELECT * FROM work_schedule LIMIT 1');
+    if (schedRows.length === 0) return false;
+    const sched = schedRows[0];
+
+    const [endH, endM] = String(sched.expected_end).split(':').map(Number);
+    const thresholdMinutes = 60; // treat departures more than 60 minutes before end as early
+    const thresholdMs = thresholdMinutes * 60 * 1000;
+
+    const expectedEnd = new Date(clockOutTime);
+    expectedEnd.setHours(endH, endM, 0, 0);
+
+    const diffMs = expectedEnd.getTime() - clockOutTime.getTime();
+    return diffMs > thresholdMs;
+  } catch (err) {
+    console.error('Early departure check error:', err);
+    return false;
+  }
+}
+
+/**
  * POST /clock/out  — manual clock out
+ * Accepts optional early_departure_reason when user leaves well before expected end of day.
  */
 async function clockOut(req, res) {
   try {
     const now = new Date();
+    const { early_departure_reason } = req.body || {};
+
+    const early = await isEarlyDeparture(now);
+    let reasonToStore = null;
+    let isFlagged = 0;
+    let flagReason = null;
+
+    if (early) {
+      const trimmed = typeof early_departure_reason === 'string' ? early_departure_reason.trim() : '';
+      if (!trimmed) {
+        return res.status(400).json({ error: 'Reason is required when leaving early' });
+      }
+      if (trimmed.length > 1000) {
+        return res.status(400).json({ error: 'Reason is too long (max 1000 characters)' });
+      }
+      reasonToStore = trimmed;
+      isFlagged = 1;
+      flagReason = 'EARLY_DEPARTURE';
+    }
+
     await pool.query(
-      `INSERT INTO clock_events (user_id, event_type, event_timestamp, method)
-       VALUES (?, 'clock_out', ?, 'token')`,
-      [req.user.id, now]
+      `INSERT INTO clock_events (user_id, event_type, event_timestamp, method, is_flagged, flag_reason, early_departure_reason)
+       VALUES (?, 'clock_out', ?, 'token', ?, ?, ?)`,
+      [req.user.id, now, isFlagged, flagReason, reasonToStore]
     );
-    return res.json({ message: 'Clocked out successfully', timestamp: now });
+
+    return res.json({
+      message: 'Clocked out successfully',
+      timestamp: now,
+      is_early_departure: !!early && !!reasonToStore,
+      flag_reason: flagReason,
+    });
   } catch (err) {
     console.error('Clock-out error:', err);
     return res.status(500).json({ error: 'Server error' });

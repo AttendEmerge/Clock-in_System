@@ -79,6 +79,7 @@ export function HRFlagsContent() {
                     <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Employee</th>
                     <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Time</th>
                     <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Flag Reason</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Details</th>
                     <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Location</th>
                     <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Action</th>
                   </tr>
@@ -95,6 +96,14 @@ export function HRFlagsContent() {
                         {ev.flag_reason?.split(',').map(r => (
                           <Badge key={r} variant={r === 'LATE_ARRIVAL' ? 'warning' : 'danger'}>{r.replace('_', ' ')}</Badge>
                         ))}
+                      </td>
+                      <td className="px-4 py-3 text-xs text-gray-600 max-w-xs">
+                        {ev.flag_reason?.includes('EARLY_DEPARTURE') && ev.early_departure_reason && (
+                          <div className="bg-amber-50 border border-amber-100 rounded-lg px-2 py-1">
+                            <p className="font-medium text-amber-800 mb-0.5">Early departure reason</p>
+                            <p className="text-amber-900 break-words">{ev.early_departure_reason}</p>
+                          </div>
+                        )}
                       </td>
                       <td className="px-4 py-3 text-gray-500 text-xs">
                         {ev.latitude != null

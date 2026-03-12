@@ -65,6 +65,7 @@ export default function EmployeeHistoryPage() {
                     <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Type</th>
                     <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Method</th>
                     <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Details</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-50">
@@ -85,6 +86,18 @@ export default function EmployeeHistoryPage() {
                           : ev.is_flagged && ev.is_unflagged
                           ? <Badge variant="neutral">Unflagged</Badge>
                           : <Badge variant="success">OK</Badge>}
+                      </td>
+                      <td className="px-4 py-3 text-xs text-gray-600">
+                        {ev.flag_reason?.includes('EARLY_DEPARTURE') && (
+                          <div className="space-y-1">
+                            <p className="font-medium text-amber-700">Early departure</p>
+                            {ev.early_departure_reason && (
+                              <p className="text-gray-500 break-words">
+                                Reason: <span className="italic">{ev.early_departure_reason}</span>
+                              </p>
+                            )}
+                          </div>
+                        )}
                       </td>
                     </tr>
                   ))}

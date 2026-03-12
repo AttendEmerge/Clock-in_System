@@ -140,6 +140,7 @@ export default function SupervisorDashboard() {
                       <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Clock In</th>
                       <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Clock Out</th>
                       <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Status</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Notes</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-50">
@@ -156,6 +157,11 @@ export default function SupervisorDashboard() {
                           <Badge variant={att.clock_in ? 'success' : 'neutral'}>
                             {att.clock_in ? (att.clock_out ? 'Done' : 'Active') : 'Absent'}
                           </Badge>
+                        </td>
+                        <td className="px-4 py-3 text-xs text-gray-600">
+                          {att.early_departure && (
+                            <span className="text-amber-700 font-medium">Left early</span>
+                          )}
                         </td>
                       </tr>
                     ))}

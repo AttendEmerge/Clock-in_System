@@ -23,6 +23,7 @@ export interface ClockEvent {
   is_flagged: number;
   flag_reason: string | null;
   is_unflagged: number;
+  early_departure_reason?: string | null;
 }
 
 export interface LeaveBalance {

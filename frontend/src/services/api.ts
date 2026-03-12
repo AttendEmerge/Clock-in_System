@@ -87,7 +87,8 @@ export const clockInQR = (qr_token: string, latitude?: number, longitude?: numbe
 export const clockInToken = (token: string, latitude?: number, longitude?: number, accuracy?: number) =>
   api.post('/clock/token', { token, latitude, longitude, accuracy }).then(r => r.data);
 
-export const clockOut = () => api.post('/clock/out').then(r => r.data);
+export const clockOut = (early_departure_reason?: string) =>
+  api.post('/clock/out', early_departure_reason ? { early_departure_reason } : {}).then(r => r.data);
 
 export const getClockStatus = () => api.get('/clock/status').then(r => r.data);
 

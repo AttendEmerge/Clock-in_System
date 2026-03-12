@@ -2,11 +2,14 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const pool = require('../db/pool');
+const { generateOneTimeToken, validateAndConsumeToken } = require('../services/tokenService');
+const { sendPasswordResetEmail } = require('../services/emailService');
 
 const ACCESS_EXPIRES = process.env.JWT_EXPIRES_IN || '1h';
 const REMEMBER_DAYS  = 30;
 const SESSION_DAYS   = 1;  // non-remember session lasts 1 day (browser-close fallback)
 const IS_PROD        = process.env.NODE_ENV === 'production';
+const PASSWORD_MIN_LENGTH = 8;
 
 function buildPayload(user) {
   return {
@@ -134,8 +137,8 @@ async function changePassword(req, res) {
   if (!currentPassword || !newPassword) {
     return res.status(400).json({ error: 'Both current and new passwords are required' });
   }
-  if (newPassword.length < 8) {
-    return res.status(400).json({ error: 'New password must be at least 8 characters' });
+  if (newPassword.length < PASSWORD_MIN_LENGTH) {
+    return res.status(400).json({ error: `New password must be at least ${PASSWORD_MIN_LENGTH} characters` });
   }
   try {
     const [rows] = await pool.query('SELECT * FROM users WHERE id = ?', [req.user.id]);
@@ -150,4 +153,146 @@ async function changePassword(req, res) {
   }
 }
 
-module.exports = { login, refresh, logout, getMe, changePassword };
+async function forgotPassword(req, res) {
+  const { email } = req.body || {};
+  if (!email || typeof email !== 'string') {
+    return res.status(400).json({ error: 'Email is required' });
+  }
+
+  const normalizedEmail = email.toLowerCase().trim();
+
+  try {
+    const [rows] = await pool.query(
+      'SELECT id, name, email, is_active FROM users WHERE email = ?',
+      [normalizedEmail]
+    );
+
+    // Always respond with a generic message to avoid leaking which emails exist.
+    const genericMessage =
+      'If an account with that email exists, we have sent password reset instructions.';
+
+    if (rows.length === 0 || !rows[0].is_active) {
+      return res.json({ message: genericMessage });
+    }
+
+    const user = rows[0];
+
+    // Generate a password reset token using the shared one_time_tokens table.
+    const tokenRecord = await generateOneTimeToken(
+      user.id,           // generated_by: treat as self-generated
+      user.id,           // for_user_id
+      'password_reset',
+      null
+    );
+
+    // Derive frontend origin for the reset link.
+    let origin = process.env.FRONTEND_URL;
+    if (!origin && req.headers.origin) {
+      origin = req.headers.origin.replace(/\/$/, '');
+    }
+    if (!origin && req.headers.referer) {
+      try {
+        const u = new URL(req.headers.referer);
+        origin = u.origin;
+      } catch {
+        // ignore
+      }
+    }
+    if (!origin) {
+      origin = `${req.protocol}://${req.hostname}:5173`;
+    }
+
+    const encodedEmail = encodeURIComponent(user.email);
+    const encodedToken = encodeURIComponent(tokenRecord.token);
+    const resetLink = `${origin}/reset-password?email=${encodedEmail}&token=${encodedToken}`;
+
+    try {
+      await sendPasswordResetEmail(user, resetLink);
+    } catch (emailErr) {
+      // Log but do not reveal transport errors to the client.
+      console.error('Password reset email error:', emailErr);
+    }
+
+    return res.json({ message: genericMessage });
+  } catch (err) {
+    console.error('Forgot password error:', err);
+    return res.status(500).json({ error: 'Server error' });
+  }
+}
+
+async function resetPassword(req, res) {
+  const { email, token, newPassword } = req.body || {};
+
+  if (!email || !token || !newPassword) {
+    return res
+      .status(400)
+      .json({ error: 'Email, token, and new password are required' });
+  }
+
+  if (typeof newPassword !== 'string' || newPassword.length < PASSWORD_MIN_LENGTH) {
+    return res.status(400).json({
+      error: `New password must be at least ${PASSWORD_MIN_LENGTH} characters`,
+    });
+  }
+
+  const normalizedEmail = String(email).toLowerCase().trim();
+
+  try {
+    const [rows] = await pool.query(
+      'SELECT id, password_hash, is_active FROM users WHERE email = ?',
+      [normalizedEmail]
+    );
+
+    // Provide the same generic response wording for both success and failure cases
+    // where appropriate, to avoid leaking whether the email or token is valid.
+    const failureMessage = 'The reset link is invalid or has expired.';
+
+    if (rows.length === 0 || !rows[0].is_active) {
+      // Run a fake token validation path to keep timing similar.
+      await validateAndConsumeToken(token, -1, 'password_reset').catch(() => {});
+      return res.status(400).json({ error: failureMessage });
+    }
+
+    const user = rows[0];
+
+    const { valid, error } = await validateAndConsumeToken(
+      token,
+      user.id,
+      'password_reset'
+    );
+
+    if (!valid) {
+      return res.status(400).json({ error: failureMessage });
+    }
+
+    const hash = await bcrypt.hash(newPassword, 10);
+    await pool.query('UPDATE users SET password_hash = ? WHERE id = ?', [
+      hash,
+      user.id,
+    ]);
+
+    // Optionally invalidate existing refresh tokens so all sessions must re-login.
+    try {
+      await pool.query('DELETE FROM refresh_tokens WHERE user_id = ?', [user.id]);
+    } catch (cleanupErr) {
+      console.error('Refresh token cleanup error after password reset:', cleanupErr);
+    }
+
+    return res.json({
+      message: 'Your password has been reset. You can now log in with your new password.',
+    });
+  } catch (err) {
+    console.error('Reset password error:', err);
+    return res.status(500).json({ error: 'Server error' });
+  }
+}
+
+module.exports = {
+  login,
+  refresh,
+  logout,
+  getMe,
+  changePassword,
+  forgotPassword,
+  resetPassword,
+};

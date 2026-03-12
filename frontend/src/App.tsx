@@ -5,6 +5,8 @@ import ErrorBoundary from './components/ErrorBoundary';
 
 // Auth
 import LoginPage from './pages/auth/LoginPage';
+import ForgotPasswordPage from './pages/auth/ForgotPasswordPage';
+import ResetPasswordPage from './pages/auth/ResetPasswordPage';
 import MobileClockInPage from './pages/MobileClockInPage';
 
 // Employee
@@ -24,6 +26,7 @@ import HRLeaveReportPage from './pages/hr/HRLeaveReportPage';
 import HRWorkforceHubPage from './pages/hr/HRWorkforceHubPage';
 import HRAttendanceHubPage from './pages/hr/HRAttendanceHubPage';
 import HRLeaveHubPage from './pages/hr/HRLeaveHubPage';
+import ChangePasswordPage from './pages/account/ChangePasswordPage';
 
 function App() {
   return (
@@ -33,6 +36,8 @@ function App() {
         <Routes>
           {/* Public */}
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="/reset-password" element={<ResetPasswordPage />} />
           <Route path="/mobile" element={<MobileClockInPage />} />
           <Route path="/" element={<Navigate to="/login" replace />} />
 
@@ -55,6 +60,13 @@ function App() {
           <Route path="/employee/leave" element={
             <ProtectedRoute allowedRoles={['employee', 'supervisor', 'hr']}>
               <EmployeeLeavePage />
+            </ProtectedRoute>
+          } />
+
+          {/* Account / profile */}
+          <Route path="/account/change-password" element={
+            <ProtectedRoute allowedRoles={['employee', 'supervisor', 'hr']}>
+              <ChangePasswordPage />
             </ProtectedRoute>
           } />
 

@@ -78,6 +78,12 @@ export const getMe = () => api.get('/auth/me').then(r => r.data);
 export const changePassword = (currentPassword: string, newPassword: string) =>
   api.put('/auth/change-password', { currentPassword, newPassword }).then(r => r.data);
 
+export const forgotPassword = (email: string) =>
+  api.post('/auth/forgot-password', { email }).then(r => r.data);
+
+export const resetPassword = (email: string, token: string, newPassword: string) =>
+  api.post('/auth/reset-password', { email, token, newPassword }).then(r => r.data);
+
 // ── CLOCK ─────────────────────────────────────────────────────────────────────
 export const getQRSession = () => api.get('/clock/qr-session').then(r => r.data);
 

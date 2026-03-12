@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Clock, Eye, EyeOff } from 'lucide-react';
 import { login as apiLogin } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
@@ -116,9 +116,16 @@ export default function LoginPage() {
           </form>
         </div>
 
-        <p className="text-center text-[#d4eef1] text-sm mt-6">
-          Contact HR if you need access or your account reset.
-        </p>
+        <div className="text-center text-[#d4eef1] text-sm mt-6 space-y-2">
+          <p>
+            <Link to="/forgot-password" className="underline">
+              Forgot your password?
+            </Link>
+          </p>
+          <p>
+            Contact HR if you need access or your account reset by an administrator.
+          </p>
+        </div>
       </div>
     </div>
   );

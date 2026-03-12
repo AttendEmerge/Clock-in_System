@@ -279,6 +279,13 @@ Use this as a quick map so the new team knows which files to edit.
 - **Refresh token:** Stored in DB (`refresh_tokens`), sent in httpOnly cookie. Used by `POST /api/auth/refresh` to issue a new access token. On logout, the refresh token is deleted and the cookie cleared.
 - **CORS:** Backend allows the frontend origin (and LAN IPs for mobile QR). Production should set `FRONTEND_URL` and restrict origins as needed.
 - **Sensitive operations:** All mutation endpoints are behind `authenticate` and often `requireRole('hr')`. No privilege escalation without changing role in DB or adding new endpoints.
+- **Password reset:** Users can self-service password resets via `POST /api/auth/forgot-password` and `POST /api/auth/reset-password`. The backend issues a one-time, time-limited token (stored in `one_time_tokens` with `token_type='password_reset'`), sends a reset link by email, and invalidates existing refresh tokens on successful reset.
+
+**Operational notes for password reset:**
+
+- Configure SMTP via `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM_EMAIL` in `backend/.env`. In development, if SMTP is not set, emails are skipped with a warning logged.
+- Consider adding rate limiting in front of `POST /api/auth/forgot-password` if you deploy behind a generic proxy; Express middleware can also be added to throttle by IP/email.
+- Monitor logs for repeated invalid/expired reset attempts, which may indicate abuse or misconfigured links.
 
 See **SYSTEM_DOCUMENTATION.md** Section 6 (Authentication Flow) and Section 15.7 (Production cookie settings).
 

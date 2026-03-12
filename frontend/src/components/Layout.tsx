@@ -5,7 +5,7 @@ import {
   LayoutDashboard, Clock, Users,
   LogOut, Menu, X, UserCheck,
   ClipboardList, CalendarDays, BarChart2,
-  AlertTriangle,
+  AlertTriangle, Lock,
 } from 'lucide-react';
 
 interface NavItem {
@@ -125,8 +125,16 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             })}
           </nav>
 
-          {/* Logout */}
-          <div className="px-3 py-4 border-t border-gray-100">
+          {/* Account + Logout */}
+          <div className="px-3 py-4 border-t border-gray-100 space-y-2">
+            <Link
+              to="/account/change-password"
+              onClick={() => setSidebarOpen(false)}
+              className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors"
+            >
+              <Lock size={18} />
+              Change Password
+            </Link>
             <button
               onClick={() => setShowLogoutConfirm(true)}
               className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm font-medium text-red-600 hover:bg-red-50 transition-colors"

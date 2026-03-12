@@ -26,15 +26,25 @@ async function generateOneTimeToken(generatedBy, forUserId, tokenType, overtimeR
 
 /**
  * Validate and consume a one-time token.
+ * Optionally restricts by token_type when provided.
  * Returns { valid: bool, tokenRow: row|null, error: string|null }
  */
-async function validateAndConsumeToken(plainToken, userId) {
+async function validateAndConsumeToken(plainToken, userId, tokenType) {
   const hash = crypto.createHash('sha256').update(plainToken.toUpperCase()).digest('hex');
   const now = new Date();
+
+  let where = `token_hash = ? AND for_user_id = ? AND used_at IS NULL AND expires_at > ?`;
+  const params = [hash, userId, now];
+
+  if (tokenType) {
+    where += ' AND token_type = ?';
+    params.push(tokenType);
+  }
+
   const [rows] = await pool.query(
     `SELECT * FROM one_time_tokens 
-     WHERE token_hash = ? AND for_user_id = ? AND used_at IS NULL AND expires_at > ?`,
-    [hash, userId, now]
+     WHERE ${where}`,
+    params
   );
   if (rows.length === 0) {
     return { valid: false, tokenRow: null, error: 'Token is invalid, expired, or already used' };

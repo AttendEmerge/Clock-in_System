@@ -73,6 +73,12 @@ After running the seed file:
 - Tokens expire after 60 minutes (configurable)
 - Employee enters the token on their dashboard
 
+### Password Reset
+- Users who forget their password can click **“Forgot your password?”** on the login page.
+- They enter their email address and, if an active account exists, the system emails a secure, time-limited reset link.
+- The link opens a **Reset Password** page where they choose a new password.
+- HR can still reset passwords directly for users from the HR Users screen.
+
 ## Key Features
 - **Auto clock-out**: Employees are automatically clocked out at end of configured work day
 - **Flagging**: Unexpected locations and late arrivals are automatically flagged for HR review
@@ -93,4 +99,7 @@ After running the seed file:
 | `JWT_EXPIRES_IN` | Token expiry (default: 8h) |
 | `QR_ROTATION_MINUTES` | How often QR rotates (default: 5) |
 | `TOKEN_EXPIRY_MINUTES` | One-time token expiry (default: 60) |
-| `FRONTEND_URL` | Frontend origin for CORS (default: http://localhost:5173) |
+| `FRONTEND_URL` | Frontend origin for CORS and links in emails (default: http://localhost:5173) |
+| `SMTP_HOST` / `SMTP_PORT` / `SMTP_SECURE` | SMTP server settings for sending emails (password reset) |
+| `SMTP_USER` / `SMTP_PASS` | SMTP credentials |
+| `SMTP_FROM_EMAIL` | From address for outbound emails (e.g. no-reply@yourcompany.com) |

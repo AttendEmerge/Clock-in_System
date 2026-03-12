@@ -143,17 +143,41 @@ export function HRFlagsContent() {
         <Modal title="Review Flagged Event" onClose={() => setUnflagModal(null)}>
           <form onSubmit={handleUnflag} className="space-y-5">
             <div className="bg-gray-50 rounded-lg p-4 space-y-2 text-sm">
-              <div className="flex justify-between"><span className="text-gray-500">Employee</span><span className="font-medium">{unflagModal.user_name}</span></div>
-              <div className="flex justify-between"><span className="text-gray-500">Time</span><span>{format(new Date(unflagModal.event_timestamp), 'd MMM yyyy HH:mm')}</span></div>
-              <div className="flex justify-between"><span className="text-gray-500">Flag</span>
-                <span>{unflagModal.flag_reason?.split(',').map(r => (
-                  <Badge key={r} variant={r === 'LATE_ARRIVAL' ? 'warning' : 'danger'}>{r.replace('_', ' ')}</Badge>
-                ))}</span>
+              <div className="flex justify-between">
+                <span className="text-gray-500">Employee</span>
+                <span className="font-medium">{unflagModal.user_name}</span>
               </div>
+              <div className="flex justify-between">
+                <span className="text-gray-500">Time</span>
+                <span>{format(new Date(unflagModal.event_timestamp), 'd MMM yyyy HH:mm')}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-500">Flag</span>
+                <span>
+                  {unflagModal.flag_reason?.split(',').map(r => (
+                    <Badge key={r} variant={r === 'LATE_ARRIVAL' ? 'warning' : 'danger'}>
+                      {r.replace('_', ' ')}
+                    </Badge>
+                  ))}
+                </span>
+              </div>
+              {unflagModal.flag_reason?.includes('EARLY_DEPARTURE') && unflagModal.early_departure_reason && (
+                <div className="mt-1">
+                  <p className="text-gray-500">Early departure reason</p>
+                  <p className="mt-0.5 text-gray-800 break-words">
+                    {unflagModal.early_departure_reason}
+                  </p>
+                </div>
+              )}
               {unflagModal.latitude != null && (
-                <div className="flex justify-between"><span className="text-gray-500">Location</span>
-                  <a href={`https://maps.google.com/?q=${unflagModal.latitude},${unflagModal.longitude}`} target="_blank" rel="noopener"
-                    className="text-blue-600 hover:underline text-xs">
+                <div className="flex justify-between">
+                  <span className="text-gray-500">Location</span>
+                  <a
+                    href={`https://maps.google.com/?q=${unflagModal.latitude},${unflagModal.longitude}`}
+                    target="_blank"
+                    rel="noopener"
+                    className="text-blue-600 hover:underline text-xs"
+                  >
                     View on Map
                   </a>
                 </div>

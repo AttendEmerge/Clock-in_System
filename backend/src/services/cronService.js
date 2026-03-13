@@ -2,6 +2,59 @@ const cron = require('node-cron');
 const pool = require('../db/pool');
 const { createNewQRSession } = require('./qrService');
 
+const APP_TIMEZONE = process.env.APP_TIMEZONE || 'UTC';
+
+/**
+ * Get date/time parts in the organization's timezone (for auto clock-out).
+ * Uses Intl API — no extra dependencies.
+ */
+function getPartsInTz(date, tz) {
+  const parts = new Intl.DateTimeFormat('en', {
+    timeZone: tz,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: 'numeric',
+    minute: 'numeric',
+    second: 'numeric',
+    weekday: 'short',
+    hour12: false,
+  }).formatToParts(date);
+  const get = (type) => parts.find((p) => p.type === type)?.value;
+  return {
+    year: parseInt(get('year'), 10),
+    month: parseInt(get('month'), 10) - 1,
+    day: parseInt(get('day'), 10),
+    hour: parseInt(get('hour'), 10),
+    minute: parseInt(get('minute'), 10),
+    second: parseInt(get('second'), 10),
+    weekday: get('weekday'),
+  };
+}
+
+/**
+ * Get UTC offset in minutes for a timezone at a given date (positive = tz ahead of UTC).
+ */
+function getOffsetMinutes(date, tz) {
+  const utcParts = new Intl.DateTimeFormat('en', {
+    timeZone: 'UTC',
+    hour: 'numeric',
+    minute: 'numeric',
+    hour12: false,
+  }).formatToParts(date);
+  const tzParts = new Intl.DateTimeFormat('en', {
+    timeZone: tz,
+    hour: 'numeric',
+    minute: 'numeric',
+    hour12: false,
+  }).formatToParts(date);
+  const utcH = parseInt(utcParts.find((p) => p.type === 'hour').value, 10);
+  const utcM = parseInt(utcParts.find((p) => p.type === 'minute').value, 10);
+  const tzH = parseInt(tzParts.find((p) => p.type === 'hour').value, 10);
+  const tzM = parseInt(tzParts.find((p) => p.type === 'minute').value, 10);
+  return (tzH - utcH) * 60 + (tzM - utcM);
+}
+
 function startCronJobs() {
   // ── Auto clock-out: check every minute against work schedule ──────────────
   cron.schedule('* * * * *', async () => {
@@ -10,17 +63,26 @@ function startCronJobs() {
       if (schedRows.length === 0) return;
       const sched = schedRows[0];
       const now = new Date();
-      const dow = now.getDay();
-      if (dow === 0 || dow === 6) return;
+      const tz = APP_TIMEZONE;
 
-      const [endH, endM] = sched.expected_end.split(':').map(Number);
-      const bufferMs  = (sched.overtime_buffer_minutes || 5) * 60 * 1000;
-      const endTime   = new Date(now);
-      endTime.setHours(endH, endM, 0, 0);
-      const checkoutTime = new Date(endTime.getTime() + bufferMs);
+      const nowParts = getPartsInTz(now, tz);
+      const dow = nowParts.weekday;
+      if (dow === 'Sat' || dow === 'Sun') return;
 
-      const diffMs = now - checkoutTime;
-      if (diffMs < 0) return;
+      const [endH, endM] = String(sched.expected_end).split(':').map(Number);
+      const bufferM = sched.overtime_buffer_minutes || 5;
+      const totalCheckoutM = endH * 60 + endM + bufferM;
+      const checkoutH = Math.floor(totalCheckoutM / 60) % 24;
+      const checkoutM = totalCheckoutM % 60;
+      const nowMinutes = nowParts.hour * 60 + nowParts.minute + nowParts.second / 60;
+
+      if (nowMinutes < totalCheckoutM) return;
+
+      const offsetMinutes = getOffsetMinutes(now, tz);
+      const checkoutTime = new Date(
+        Date.UTC(nowParts.year, nowParts.month, nowParts.day, checkoutH, checkoutM, 0) -
+          offsetMinutes * 60 * 1000
+      );
 
       const [usersIn] = await pool.query(
         `SELECT DISTINCT user_id FROM clock_events ce1

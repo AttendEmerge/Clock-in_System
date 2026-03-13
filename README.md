@@ -99,6 +99,7 @@ After running the seed file:
 | `JWT_EXPIRES_IN` | Token expiry (default: 8h) |
 | `QR_ROTATION_MINUTES` | How often QR rotates (default: 5) |
 | `TOKEN_EXPIRY_MINUTES` | One-time token expiry (default: 60) |
+| `APP_TIMEZONE` | Organization timezone for auto clock-out (e.g. `Africa/Blantyre` for Malawi; default: UTC) |
 | `FRONTEND_URL` | Frontend origin for CORS and links in emails (default: http://localhost:5173) |
 | `RESEND_API_KEY` | (Recommended on Render) Resend.com API key for password-reset emails; avoids blocked SMTP ports. |
 | `RESEND_FROM_EMAIL` | Optional. From address for Resend (e.g. `Clock-in <onboarding@resend.dev>`). |

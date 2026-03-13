@@ -367,6 +367,7 @@ In `backend/.env` for production:
 | `JWT_SECRET` | `long_random_string_64chars` | Generate with a password manager or `openssl rand -hex 32` |
 | `JWT_EXPIRES_IN` | `8h` | Token lifetime |
 | `FRONTEND_URL` | `https://clockin.yourcompany.com` | **Required in production** — the public URL of your frontend |
+| `APP_TIMEZONE` | `Africa/Blantyre` | **Required for auto clock-out** — IANA timezone (e.g. `Africa/Blantyre` for Malawi) so the cron uses your local time |
 
 ### 3. HTTPS (SSL/TLS)
 

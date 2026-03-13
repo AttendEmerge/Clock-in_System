@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import Layout from '../../components/Layout';
 import Badge from '../../components/Badge';
 import Modal from '../../components/Modal';
-import { getUsers, createUser, updateUser, deleteUser, resetUserPassword, getDepartments, updateLeaveBalance } from '../../services/api';
+import { getUsers, createUser, updateUser, deleteUser, resetUserPassword, getDepartments, updateLeaveBalance, getLeavePolicy } from '../../services/api';
 import type { User, Department } from '../../types';
 import { Plus, Search, Pencil, KeyRound, Heart, Trash2 } from 'lucide-react';
 
@@ -19,6 +19,7 @@ export function HREmployeesContent() {
   const [editModal, setEditModal] = useState<User | null>(null);
   const [pwModal, setPwModal] = useState<User | null>(null);
   const [leaveModal, setLeaveModal] = useState<User | null>(null);
+  const [applicableLeaveTypes, setApplicableLeaveTypes] = useState<{ leave_type: string; default_days: number }[]>([]);
 
   const [form, setForm] = useState({ name: '', email: '', password: '', role: 'employee', department_id: '', gender: 'other' });
   const [editForm, setEditForm] = useState({ name: '', email: '', role: '', department_id: '', is_active: true, gender: 'other' });
@@ -105,6 +106,25 @@ export function HREmployeesContent() {
     setEditModal(user);
   }
 
+  async function openLeaveModal(user: User) {
+    setLeaveModal(user);
+    setLeaveForm({ leave_type: '', days_allocated: 0, days_used: 0 });
+    try {
+      const policies = await getLeavePolicy();
+      const gender = user.gender || 'other';
+      const applicable = policies.filter((p: { leave_type: string; gender_applicable: string }) => {
+        const ga = p.gender_applicable;
+        return ga === 'all' || (ga === 'female' && gender === 'female') || (ga === 'male' && gender === 'male');
+      }).map((p: { leave_type: string; default_days: number }) => ({ leave_type: p.leave_type, default_days: p.default_days }));
+      setApplicableLeaveTypes(applicable);
+      if (applicable.length > 0) {
+        setLeaveForm({ leave_type: applicable[0].leave_type, days_allocated: applicable[0].default_days, days_used: 0 });
+      }
+    } catch {
+      setApplicableLeaveTypes([]);
+    }
+  }
+
   async function handleDelete(user: User) {
     if (!window.confirm(`Are you sure you want to delete "${user.name}"? Their account will be deactivated and they will no longer be able to log in.`)) return;
     try {
@@ -188,7 +208,7 @@ export function HREmployeesContent() {
                             className="p-1.5 text-gray-400 hover:text-orange-600 hover:bg-orange-50 rounded">
                             <KeyRound size={15} />
                           </button>
-                          <button onClick={() => setLeaveModal(u)} title="Edit Leave"
+                          <button onClick={() => openLeaveModal(u)} title="Edit Leave"
                             className="p-1.5 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded">
                             <Heart size={15} />
                           </button>
@@ -342,13 +362,24 @@ export function HREmployeesContent() {
           <form onSubmit={handleLeaveUpdate} className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Leave Type</label>
-              <select value={leaveForm.leave_type} onChange={e => setLeaveForm({ ...leaveForm, leave_type: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none">
-                <option value="paid">Paid Leave</option>
-                <option value="sick">Sick Leave</option>
-                <option value="maternity">Maternity Leave</option>
-                <option value="paternity">Paternity Leave</option>
+              <select
+                value={leaveForm.leave_type}
+                onChange={e => {
+                  const sel = applicableLeaveTypes.find(t => t.leave_type === e.target.value);
+                  setLeaveForm({ ...leaveForm, leave_type: e.target.value, days_allocated: sel?.default_days ?? leaveForm.days_allocated });
+                }}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="">Select leave type…</option>
+                {applicableLeaveTypes.map(t => (
+                  <option key={t.leave_type} value={t.leave_type}>
+                    {t.leave_type.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())} (default: {t.default_days} days)
+                  </option>
+                ))}
               </select>
+              {applicableLeaveTypes.length === 0 && (
+                <p className="text-xs text-amber-600 mt-1">No leave types apply to this employee&apos;s gender.</p>
+              )}
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
@@ -370,7 +401,8 @@ export function HREmployeesContent() {
               Remaining = Allocated − Used = <strong>{Math.max(0, leaveForm.days_allocated - leaveForm.days_used)}</strong> days
             </p>
             <button type="submit"
-              className="w-full bg-green-600 hover:bg-green-700 text-white py-2.5 rounded-lg text-sm font-medium">
+              disabled={!leaveForm.leave_type}
+              className="w-full bg-green-600 hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white py-2.5 rounded-lg text-sm font-medium">
               Update Balance
             </button>
           </form>

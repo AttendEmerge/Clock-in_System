@@ -32,14 +32,15 @@ function addWorkingDays(dateStr, days) {
 }
 
 // Leave types to seed per gender — reads all policies from the DB
+// Strict matching: female-only for female, male-only for male, all for everyone. 'other' gets only 'all'.
 async function leaveTypesForGender(gender) {
   try {
     const [rows] = await pool.query('SELECT leave_type, default_days, gender_applicable FROM leave_policies');
     return rows
       .filter(r => {
         if (r.gender_applicable === 'all') return true;
-        if (r.gender_applicable === 'female' && (gender === 'female' || gender === 'other')) return true;
-        if (r.gender_applicable === 'male'   && (gender === 'male'   || gender === 'other')) return true;
+        if (r.gender_applicable === 'female' && gender === 'female') return true;
+        if (r.gender_applicable === 'male' && gender === 'male') return true;
         return false;
       })
       .map(r => ({ type: r.leave_type, days: parseFloat(r.default_days) }));
@@ -233,6 +234,25 @@ async function updateLeaveBalance(req, res) {
   }
   try {
     const y = year || new Date().getFullYear();
+
+    // Validate leave type is applicable to user's gender
+    const [userRows] = await pool.query('SELECT gender FROM users WHERE id = ?', [id]);
+    const gender = userRows[0]?.gender || 'other';
+    const [policyRows] = await pool.query(
+      'SELECT gender_applicable FROM leave_policies WHERE leave_type = ?',
+      [leave_type]
+    );
+    if (policyRows.length > 0) {
+      const ga = policyRows[0].gender_applicable;
+      const applicable =
+        ga === 'all' || (ga === 'female' && gender === 'female') || (ga === 'male' && gender === 'male');
+      if (!applicable) {
+        const typeLabel = leave_type.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+        return res.status(400).json({
+          error: `${typeLabel} leave is only applicable to ${ga === 'female' ? 'female' : 'male'} employees.`,
+        });
+      }
+    }
 
     // Fetch existing row
     const [rows] = await pool.query(

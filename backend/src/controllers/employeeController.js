@@ -37,8 +37,8 @@ async function getDashboard(req, res) {
       if (existingTypes.has(p.leave_type)) continue;
       const applicable =
         p.gender_applicable === 'all' ||
-        (p.gender_applicable === 'female' && (gender === 'female' || gender === 'other')) ||
-        (p.gender_applicable === 'male'   && (gender === 'male'   || gender === 'other'));
+        (p.gender_applicable === 'female' && gender === 'female') ||
+        (p.gender_applicable === 'male' && gender === 'male');
       if (!applicable) continue;
       const days = parseFloat(p.default_days);
       await pool.query(
@@ -49,8 +49,13 @@ async function getDashboard(req, res) {
     }
 
     const [leaves] = await pool.query(
-      'SELECT * FROM leave_balances WHERE user_id = ? AND year = ?',
-      [userId, year]
+      `SELECT lb.* FROM leave_balances lb
+       JOIN leave_policies lp ON lp.leave_type = lb.leave_type
+       WHERE lb.user_id = ? AND lb.year = ?
+         AND (lp.gender_applicable = 'all'
+           OR (lp.gender_applicable = 'female' AND ? = 'female')
+           OR (lp.gender_applicable = 'male' AND ? = 'male'))`,
+      [userId, year, gender, gender]
     );
 
     const [monthEvents] = await pool.query(
@@ -201,8 +206,28 @@ async function requestLeave(req, res) {
   }
 
   try {
-    // Validate employee has this leave type in their balance
     const year = new Date(start_date).getFullYear();
+
+    // Validate leave type is applicable to user's gender
+    const [userRows] = await pool.query('SELECT gender FROM users WHERE id = ?', [req.user.id]);
+    const gender = userRows[0]?.gender || 'other';
+    const [policyRows] = await pool.query(
+      'SELECT gender_applicable FROM leave_policies WHERE leave_type = ?',
+      [leave_type]
+    );
+    if (policyRows.length > 0) {
+      const policyRow = policyRows[0];
+      const ga = policyRow.gender_applicable;
+      const applicable =
+        ga === 'all' || (ga === 'female' && gender === 'female') || (ga === 'male' && gender === 'male');
+      if (!applicable) {
+        return res.status(400).json({
+          error: `This leave type is not available for your gender.`,
+        });
+      }
+    }
+
+    // Validate employee has this leave type in their balance
     const [balRows] = await pool.query(
       'SELECT * FROM leave_balances WHERE user_id = ? AND leave_type = ? AND year = ?',
       [req.user.id, leave_type, year]

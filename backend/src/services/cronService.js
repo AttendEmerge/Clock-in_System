@@ -20,7 +20,7 @@ function startCronJobs() {
       const checkoutTime = new Date(endTime.getTime() + bufferMs);
 
       const diffMs = now - checkoutTime;
-      if (diffMs < 0 || diffMs > 60000) return;
+      if (diffMs < 0) return;
 
       const [usersIn] = await pool.query(
         `SELECT DISTINCT user_id FROM clock_events ce1

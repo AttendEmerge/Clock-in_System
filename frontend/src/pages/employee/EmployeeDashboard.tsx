@@ -8,7 +8,7 @@ import Modal from '../../components/Modal';
 import StatCard from '../../components/StatCard';
 import Badge from '../../components/Badge';
 import {
-  getEmployeeDashboard, getClockStatus, clockOut,
+  getEmployeeDashboard, getClockStatus, getClockOutCheck, clockOut,
   requestOvertime, getQRSession, requestTokenFromHR,
   getEmployeeLocations, getEmployeeHolidays,
 } from '../../services/api';
@@ -53,9 +53,11 @@ export default function EmployeeDashboardPage() {
   const [actionMsg, setActionMsg] = useState('');
   const [actionError, setActionError] = useState('');
 
-  // Early departure modal
+  // Clock-out modals (early = reason required, confirm = simple confirmation)
   const [showEarlyModal, setShowEarlyModal] = useState(false);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [earlyReason, setEarlyReason] = useState('');
+  const [clockOutChecking, setClockOutChecking] = useState(false);
 
   useEffect(() => {
     fetchAll();
@@ -181,18 +183,41 @@ export default function EmployeeDashboardPage() {
     setActionError('');
     setActionMsg('');
     setEarlyReason('');
-    setShowEarlyModal(true);
+    setClockOutChecking(true);
+    try {
+      const { requires_reason } = await getClockOutCheck();
+      if (requires_reason) {
+        setShowEarlyModal(true);
+      } else {
+        setShowConfirmModal(true);
+      }
+    } catch {
+      setActionError('Unable to check clock-out status. Please try again.');
+    } finally {
+      setClockOutChecking(false);
+    }
   }
 
   async function confirmEarlyDeparture() {
     try {
       const reason = earlyReason.trim();
-      const res = await clockOut(reason || undefined);
+      const res = await clockOut(reason);
       setActionMsg(res.is_early_departure
         ? 'Clocked out early. Your reason has been recorded.'
         : 'Clocked out successfully.');
       setShowEarlyModal(false);
       setEarlyReason('');
+      fetchAll();
+    } catch (e: any) {
+      setActionError(e.response?.data?.error || 'Clock-out failed.');
+    }
+  }
+
+  async function confirmClockOut() {
+    try {
+      await clockOut();
+      setActionMsg('Clocked out successfully.');
+      setShowConfirmModal(false);
       fetchAll();
     } catch (e: any) {
       setActionError(e.response?.data?.error || 'Clock-out failed.');
@@ -313,9 +338,10 @@ export default function EmployeeDashboardPage() {
             {isClockedIn && (
               <button
                 onClick={handleClockOut}
-                className="flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+                disabled={clockOutChecking}
+                className="flex items-center gap-2 bg-red-500 hover:bg-red-600 disabled:opacity-60 disabled:cursor-not-allowed text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
               >
-                <LogOut size={16} /> Clock Out
+                <LogOut size={16} /> {clockOutChecking ? 'Checking...' : 'Clock Out'}
               </button>
             )}
             <button
@@ -617,16 +643,16 @@ export default function EmployeeDashboardPage() {
         </Modal>
       )}
 
-      {/* ── Early Departure Modal ─────────────────────────────────────────── */}
+      {/* ── Early Departure Modal (only when leaving significantly early) ─── */}
       {showEarlyModal && (
         <Modal title="Clock Out" onClose={() => setShowEarlyModal(false)} size="sm">
           <div className="space-y-4">
             <p className="text-sm text-gray-600">
-              If you are leaving significantly earlier than your normal end time, please share a short reason.
+              You are leaving significantly earlier than your normal end time. Please share a short reason.
               This helps your supervisor and HR understand and plan around early departures.
             </p>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Reason (optional)</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Reason (required)</label>
               <textarea
                 value={earlyReason}
                 onChange={e => setEarlyReason(e.target.value)}
@@ -650,9 +676,37 @@ export default function EmployeeDashboardPage() {
               <button
                 type="button"
                 onClick={confirmEarlyDeparture}
-                className="px-4 py-2 rounded-lg text-sm bg-red-500 text-white hover:bg-red-600"
+                disabled={!earlyReason.trim()}
+                className="px-4 py-2 rounded-lg text-sm bg-red-500 text-white hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Confirm Clock Out
+              </button>
+            </div>
+          </div>
+        </Modal>
+      )}
+
+      {/* ── Clock Out Confirmation (on-time or late) ───────────────────────── */}
+      {showConfirmModal && (
+        <Modal title="Clock Out" onClose={() => setShowConfirmModal(false)} size="sm">
+          <div className="space-y-4">
+            <p className="text-sm text-gray-600">
+              Are you sure you want to clock out?
+            </p>
+            <div className="flex gap-2 justify-end">
+              <button
+                type="button"
+                onClick={() => setShowConfirmModal(false)}
+                className="px-3 py-2 rounded-lg text-sm border border-gray-300 text-gray-600 hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={confirmClockOut}
+                className="px-4 py-2 rounded-lg text-sm bg-red-500 text-white hover:bg-red-600"
+              >
+                Yes, Clock Out
               </button>
             </div>
           </div>

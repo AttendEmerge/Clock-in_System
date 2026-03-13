@@ -59,7 +59,7 @@ function getOffsetMinutes(date, tz = APP_TIMEZONE) {
  * Check if a clock-out time is "early" — significantly before expected_end in org timezone.
  * Returns true only when the user clocks out more than thresholdMinutes before expected_end.
  */
-function isEarlyDepartureInTz(clockOutTime, expectedEndStr, thresholdMinutes = 60, tz = APP_TIMEZONE) {
+function isEarlyDepartureInTz(clockOutTime, expectedEndStr, thresholdMinutes = 15, tz = APP_TIMEZONE) {
   const parts = getPartsInTz(clockOutTime, tz);
   const nowMinutes = parts.hour * 60 + parts.minute + parts.second / 60;
 

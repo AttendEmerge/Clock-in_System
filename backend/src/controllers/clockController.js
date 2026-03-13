@@ -177,7 +177,7 @@ async function clockInToken(req, res) {
 /**
  * Helper — determine if a manual clock-out should be treated as an early departure.
  * Uses organization timezone (APP_TIMEZONE) so HR-configured expected_end is compared correctly.
- * Early = clocking out more than 60 minutes before expected_end in org local time.
+ * Early = clocking out more than 15 minutes before expected_end in org local time.
  */
 async function isEarlyDeparture(clockOutTime) {
   try {
@@ -185,11 +185,26 @@ async function isEarlyDeparture(clockOutTime) {
     if (schedRows.length === 0) return false;
     const sched = schedRows[0];
 
-    const thresholdMinutes = 60; // treat departures more than 60 minutes before end as early
+    const thresholdMinutes = 15; // treat departures more than 15 minutes before end as early
     return isEarlyDepartureInTz(clockOutTime, sched.expected_end, thresholdMinutes, APP_TIMEZONE);
   } catch (err) {
     console.error('Early departure check error:', err);
     return false;
+  }
+}
+
+/**
+ * GET /clock/out/check  — whether the current clock-out would require an early-departure reason.
+ * Used by the frontend to show the appropriate modal (reason form vs simple confirmation).
+ */
+async function getClockOutCheck(req, res) {
+  try {
+    const now = new Date();
+    const requiresReason = await isEarlyDeparture(now);
+    return res.json({ requires_reason: requiresReason });
+  } catch (err) {
+    console.error('Clock-out check error:', err);
+    return res.status(500).json({ error: 'Server error' });
   }
 }
 
@@ -312,4 +327,4 @@ async function getMyHistory(req, res) {
   }
 }
 
-module.exports = { getQRSession, clockInQR, clockInToken, clockOut, getClockStatus, getMyHistory };
+module.exports = { getQRSession, clockInQR, clockInToken, getClockOutCheck, clockOut, getClockStatus, getMyHistory };

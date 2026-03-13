@@ -4,6 +4,7 @@ const { getCurrentQRSession, validateQRToken } = require('../services/qrService'
 const { validateAndConsumeToken } = require('../services/tokenService');
 const { evaluateClockInFlags } = require('../services/flagService');
 const { getHolidayDatesForYear } = require('./hrController');
+const { isEarlyDepartureInTz, APP_TIMEZONE } = require('../utils/timezone');
 
 /**
  * GET /clock/qr-session  — returns base64 QR image for the current session
@@ -175,7 +176,8 @@ async function clockInToken(req, res) {
 
 /**
  * Helper — determine if a manual clock-out should be treated as an early departure.
- * We consider it early if the employee clocks out significantly before expected_end.
+ * Uses organization timezone (APP_TIMEZONE) so HR-configured expected_end is compared correctly.
+ * Early = clocking out more than 60 minutes before expected_end in org local time.
  */
 async function isEarlyDeparture(clockOutTime) {
   try {
@@ -183,15 +185,8 @@ async function isEarlyDeparture(clockOutTime) {
     if (schedRows.length === 0) return false;
     const sched = schedRows[0];
 
-    const [endH, endM] = String(sched.expected_end).split(':').map(Number);
     const thresholdMinutes = 60; // treat departures more than 60 minutes before end as early
-    const thresholdMs = thresholdMinutes * 60 * 1000;
-
-    const expectedEnd = new Date(clockOutTime);
-    expectedEnd.setHours(endH, endM, 0, 0);
-
-    const diffMs = expectedEnd.getTime() - clockOutTime.getTime();
-    return diffMs > thresholdMs;
+    return isEarlyDepartureInTz(clockOutTime, sched.expected_end, thresholdMinutes, APP_TIMEZONE);
   } catch (err) {
     console.error('Early departure check error:', err);
     return false;

@@ -1,59 +1,7 @@
 const cron = require('node-cron');
 const pool = require('../db/pool');
 const { createNewQRSession } = require('./qrService');
-
-const APP_TIMEZONE = process.env.APP_TIMEZONE || 'UTC';
-
-/**
- * Get date/time parts in the organization's timezone (for auto clock-out).
- * Uses Intl API — no extra dependencies.
- */
-function getPartsInTz(date, tz) {
-  const parts = new Intl.DateTimeFormat('en', {
-    timeZone: tz,
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: 'numeric',
-    minute: 'numeric',
-    second: 'numeric',
-    weekday: 'short',
-    hour12: false,
-  }).formatToParts(date);
-  const get = (type) => parts.find((p) => p.type === type)?.value;
-  return {
-    year: parseInt(get('year'), 10),
-    month: parseInt(get('month'), 10) - 1,
-    day: parseInt(get('day'), 10),
-    hour: parseInt(get('hour'), 10),
-    minute: parseInt(get('minute'), 10),
-    second: parseInt(get('second'), 10),
-    weekday: get('weekday'),
-  };
-}
-
-/**
- * Get UTC offset in minutes for a timezone at a given date (positive = tz ahead of UTC).
- */
-function getOffsetMinutes(date, tz) {
-  const utcParts = new Intl.DateTimeFormat('en', {
-    timeZone: 'UTC',
-    hour: 'numeric',
-    minute: 'numeric',
-    hour12: false,
-  }).formatToParts(date);
-  const tzParts = new Intl.DateTimeFormat('en', {
-    timeZone: tz,
-    hour: 'numeric',
-    minute: 'numeric',
-    hour12: false,
-  }).formatToParts(date);
-  const utcH = parseInt(utcParts.find((p) => p.type === 'hour').value, 10);
-  const utcM = parseInt(utcParts.find((p) => p.type === 'minute').value, 10);
-  const tzH = parseInt(tzParts.find((p) => p.type === 'hour').value, 10);
-  const tzM = parseInt(tzParts.find((p) => p.type === 'minute').value, 10);
-  return (tzH - utcH) * 60 + (tzM - utcM);
-}
+const { getPartsInTz, getOffsetMinutes, APP_TIMEZONE } = require('../utils/timezone');
 
 function startCronJobs() {
   // ── Auto clock-out: check every minute against work schedule ──────────────

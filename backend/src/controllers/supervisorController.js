@@ -16,14 +16,14 @@ async function getDashboard(req, res) {
       [deptId]
     );
 
-    // Pending overtime requests for this supervisor
+    // Pending overtime requests for employees in this supervisor's department
     const [pendingOT] = await pool.query(
       `SELECT ot.*, u.name as employee_name, u.email as employee_email
        FROM overtime_requests ot
        JOIN users u ON ot.employee_id = u.id
-       WHERE ot.supervisor_id = ? AND ot.status = 'pending'
+       WHERE u.department_id = ? AND ot.status = 'pending'
        ORDER BY ot.created_at DESC`,
-      [req.user.id]
+      [deptId]
     );
 
     // Today's attendance for team
@@ -46,13 +46,16 @@ async function getDashboard(req, res) {
 }
 
 /**
- * GET /supervisor/overtime-requests  — all requests assigned to this supervisor
+ * GET /supervisor/overtime-requests  — requests from employees in this supervisor's department
  */
 async function getOvertimeRequests(req, res) {
   const { status } = req.query;
   try {
-    let where = 'WHERE ot.supervisor_id = ?';
-    const params = [req.user.id];
+    const [deptRow] = await pool.query('SELECT department_id FROM users WHERE id = ?', [req.user.id]);
+    const deptId = deptRow[0]?.department_id;
+
+    let where = 'WHERE u.department_id = ?';
+    const params = [deptId];
     if (status) { where += ' AND ot.status = ?'; params.push(status); }
     const [rows] = await pool.query(
       `SELECT ot.*, u.name as employee_name, u.email as employee_email
@@ -69,7 +72,7 @@ async function getOvertimeRequests(req, res) {
 }
 
 /**
- * PATCH /supervisor/overtime-requests/:id  — approve or reject
+ * PATCH /supervisor/overtime-requests/:id  — approve or reject (must be from employee in supervisor's department)
  */
 async function actionOvertimeRequest(req, res) {
   const { id } = req.params;
@@ -78,9 +81,14 @@ async function actionOvertimeRequest(req, res) {
     return res.status(400).json({ error: 'Action must be approve or reject' });
   }
   try {
+    const [deptRow] = await pool.query('SELECT department_id FROM users WHERE id = ?', [req.user.id]);
+    const deptId = deptRow[0]?.department_id;
+
     const [rows] = await pool.query(
-      `SELECT * FROM overtime_requests WHERE id = ? AND supervisor_id = ?`,
-      [id, req.user.id]
+      `SELECT ot.* FROM overtime_requests ot
+       JOIN users u ON ot.employee_id = u.id
+       WHERE ot.id = ? AND u.department_id = ?`,
+      [id, deptId]
     );
     if (rows.length === 0) {
       return res.status(404).json({ error: 'Overtime request not found' });
@@ -90,8 +98,8 @@ async function actionOvertimeRequest(req, res) {
     }
     const newStatus = action === 'approve' ? 'supervisor_approved' : 'rejected';
     await pool.query(
-      `UPDATE overtime_requests SET status = ?, supervisor_action_at = NOW(), rejection_reason = ? WHERE id = ?`,
-      [newStatus, rejection_reason || null, id]
+      `UPDATE overtime_requests SET status = ?, supervisor_id = COALESCE(supervisor_id, ?), supervisor_action_at = NOW(), rejection_reason = ? WHERE id = ?`,
+      [newStatus, req.user.id, rejection_reason || null, id]
     );
     return res.json({ message: `Request ${newStatus.replace('_', ' ')}` });
   } catch (err) {

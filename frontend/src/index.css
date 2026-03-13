@@ -1,6 +1,31 @@
 @import "tailwindcss";
 @import "leaflet/dist/leaflet.css";
 
+@theme {
+  /* Blue palette from #4C808A */
+  --color-blue-50: #e8f2f3;
+  --color-blue-100: #c9e4e7;
+  --color-blue-200: #9bd6db;
+  --color-blue-300: #6dc8cf;
+  --color-blue-400: #5a9ea6;
+  --color-blue-500: #4C808A;
+  --color-blue-600: #4C808A;
+  --color-blue-700: #3d6a72;
+  --color-blue-800: #2e545a;
+  --color-blue-900: #1f3e42;
+  /* Green/button palette from #3B4167 */
+  --color-green-50: #e8e9f0;
+  --color-green-100: #c9cbd9;
+  --color-green-200: #9a9db8;
+  --color-green-300: #6b6f97;
+  --color-green-400: #4d5274;
+  --color-green-500: #3B4167;
+  --color-green-600: #3B4167;
+  --color-green-700: #30345a;
+  --color-green-800: #25274d;
+  --color-green-900: #1a1b40;
+}
+
 @layer base {
   * {
     box-sizing: border-box;
@@ -14,7 +39,7 @@
 .login-shell {
   position: relative;
   overflow: hidden;
-  background: linear-gradient(135deg, #007489 0%, #00697a 52%, #004f63 100%);
+  background: linear-gradient(135deg, #4C808A 0%, #3d6a72 52%, #2e545a 100%);
 }
 
 .login-shell::before {

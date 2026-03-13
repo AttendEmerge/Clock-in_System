@@ -4,7 +4,40 @@ const { getCurrentQRSession, validateQRToken } = require('../services/qrService'
 const { validateAndConsumeToken } = require('../services/tokenService');
 const { evaluateClockInFlags } = require('../services/flagService');
 const { getHolidayDatesForYear } = require('./hrController');
-const { isEarlyDepartureInTz, APP_TIMEZONE } = require('../utils/timezone');
+const { isEarlyDepartureInTz, getPartsInTz, getOffsetMinutes, APP_TIMEZONE } = require('../utils/timezone');
+
+/** Re-enable hour for regular clock-in after end of day (org local time) */
+const REGULAR_CLOCKIN_REOPEN_HOUR = 6;
+
+/**
+ * Check if regular clock-in is blocked because user has already clocked out today.
+ * Blocked until 6am the next day (org timezone).
+ */
+async function isRegularClockInBlocked(userId) {
+  const [rows] = await pool.query(
+    `SELECT event_type, event_timestamp FROM clock_events
+     WHERE user_id = ? AND DATE(event_timestamp) = CURDATE()
+     ORDER BY event_timestamp DESC LIMIT 1`,
+    [userId]
+  );
+  if (rows.length === 0 || rows[0].event_type === 'clock_in') {
+    return { blocked: false };
+  }
+  const clockOutTime = new Date(rows[0].event_timestamp);
+  const nextDay = new Date(clockOutTime.getTime() + 24 * 60 * 60 * 1000);
+  const nextDayParts = getPartsInTz(nextDay, APP_TIMEZONE);
+  const offsetMinutes = getOffsetMinutes(nextDay, APP_TIMEZONE);
+  const utcHours = REGULAR_CLOCKIN_REOPEN_HOUR - offsetMinutes / 60;
+  const nextDay6am = new Date(Date.UTC(nextDayParts.year, nextDayParts.month, nextDayParts.day, utcHours, 0, 0));
+  const now = new Date();
+  if (now >= nextDay6am) {
+    return { blocked: false };
+  }
+  return {
+    blocked: true,
+    message: `Regular clock-in is disabled until tomorrow at 6am. Use the overtime clock-in flow if you still need to clock in.`,
+  };
+}
 
 /**
  * GET /clock/qr-session  — returns base64 QR image for the current session
@@ -90,6 +123,14 @@ async function clockInQR(req, res) {
       });
     }
 
+    const { blocked, message } = await isRegularClockInBlocked(req.user.id);
+    if (blocked) {
+      return res.status(403).json({
+        error: message,
+        regular_clock_in_blocked: true,
+      });
+    }
+
     const session = await validateQRToken(qr_token);
     if (!session) {
       return res.status(400).json({ error: 'QR code has expired. Please scan the latest code.' });
@@ -139,6 +180,13 @@ async function clockInToken(req, res) {
         return res.status(403).json({
           error: `Today is a holiday (${holidayName}). Regular clock-in is disabled. Use the overtime request flow to clock in.`,
           is_holiday: true,
+        });
+      }
+      const { blocked, message } = await isRegularClockInBlocked(req.user.id);
+      if (blocked) {
+        return res.status(403).json({
+          error: message,
+          regular_clock_in_blocked: true,
         });
       }
     }
@@ -290,11 +338,15 @@ async function getClockStatus(req, res) {
       totalMinutes += (Date.now() - openIn.getTime()) / 60000;
     }
 
+    const { blocked: regularBlocked, message: regularBlockedMsg } = await isRegularClockInBlocked(req.user.id);
+
     return res.json({
       is_clocked_in: isClockedIn,
       last_event: lastEvent,
       today_events: todayEvents,
       total_minutes_today: Math.floor(totalMinutes),
+      regular_clock_in_blocked: regularBlocked,
+      regular_clock_in_blocked_reason: regularBlocked ? regularBlockedMsg : undefined,
     });
   } catch (err) {
     console.error('Clock status error:', err);

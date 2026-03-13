@@ -29,6 +29,7 @@ export default function MobileClockInPage() {
   const [userName,   setUserName]  = useState('');
   const [jwt,        setJwt]       = useState('');
   const [errorMsg,   setErrorMsg]  = useState('');
+  const [showOvertimeLink, setShowOvertimeLink] = useState(false);
   const [successMsg, setSuccessMsg] = useState('');
   const [isFlagged,  setIsFlagged] = useState(false);
   const [flagReason, setFlagReason] = useState('');
@@ -150,6 +151,7 @@ export default function MobileClockInPage() {
     if (!qrToken) return;
     setStep('clocking');
     setErrorMsg('');
+    setShowOvertimeLink(false);
 
     // Use cached coords if already acquired; otherwise try one more time
     let pos: Coords | null = coordsRef.current;
@@ -176,7 +178,10 @@ export default function MobileClockInPage() {
       }
 
       if (!res.ok) {
-        throw new Error(data.error || 'Clock-in failed');
+        setShowOvertimeLink(!!data.regular_clock_in_blocked);
+        const err = new Error(data.error || 'Clock-in failed') as Error & { regular_clock_in_blocked?: boolean };
+        err.regular_clock_in_blocked = !!data.regular_clock_in_blocked;
+        throw err;
       }
 
       setSuccessMsg(data.message || 'Clocked in successfully!');
@@ -184,8 +189,9 @@ export default function MobileClockInPage() {
       setFlagReason(data.flag_reason || '');
       setStep('success');
     } catch (err: unknown) {
+      const e = err as Error & { regular_clock_in_blocked?: boolean };
       setStep('error');
-      setErrorMsg((err as Error).message || 'Clock-in failed. Please try again.');
+      setErrorMsg(e.message || 'Clock-in failed. Please try again.');
     }
   }
 
@@ -222,9 +228,16 @@ export default function MobileClockInPage() {
       <Shell>
         <AlertCircle size={48} className="text-red-500 mb-4" />
         <p className="text-red-700 font-semibold text-center">{errorMsg}</p>
-        <button onClick={() => navigate('/login')} className="mt-6 text-blue-600 underline text-sm">
-          Go to login
-        </button>
+        <div className="mt-6 flex flex-col items-center gap-3">
+          {showOvertimeLink && (
+            <a href="/employee/overtime" className="text-blue-600 font-semibold underline">
+              Request Overtime
+            </a>
+          )}
+          <button onClick={() => navigate('/login')} className="text-blue-600 underline text-sm">
+            Go to login
+          </button>
+        </div>
       </Shell>
     );
   }

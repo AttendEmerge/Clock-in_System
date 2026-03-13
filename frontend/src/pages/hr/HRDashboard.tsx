@@ -171,7 +171,7 @@ export default function HRDashboard() {
                   <XAxis dataKey="day" tick={{ fontSize: 12 }} />
                   <YAxis tick={{ fontSize: 12 }} allowDecimals={false} />
                   <Tooltip />
-                  <Bar dataKey="present" fill="#3b82f6" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="present" fill="#4C808A" radius={[4, 4, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             )}
@@ -189,7 +189,7 @@ export default function HRDashboard() {
                   <XAxis type="number" tick={{ fontSize: 12 }} allowDecimals={false} />
                   <YAxis dataKey="name" type="category" width={100} tick={{ fontSize: 11 }} />
                   <Tooltip />
-                  <Bar dataKey="present" fill="#22c55e" name="Present" radius={[0, 4, 4, 0]} stackId="a" />
+                  <Bar dataKey="present" fill="#3B4167" name="Present" radius={[0, 4, 4, 0]} stackId="a" />
                   <Bar dataKey="absent" fill="#e5e7eb" name="Absent" radius={[0, 4, 4, 0]} stackId="a" />
                 </BarChart>
               </ResponsiveContainer>

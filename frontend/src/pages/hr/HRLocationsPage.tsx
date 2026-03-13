@@ -212,7 +212,7 @@ export function HRLocationsContent() {
                 <Circle
                   center={[Number(mapPreviewLoc.latitude), Number(mapPreviewLoc.longitude)]}
                   radius={mapPreviewLoc.radius_meters}
-                  pathOptions={{ color: '#2563eb', fillColor: '#3b82f6', fillOpacity: 0.2, weight: 2 }}
+                  pathOptions={{ color: '#4C808A', fillColor: '#4C808A', fillOpacity: 0.2, weight: 2 }}
                 />
               </MapContainer>
             </div>
@@ -254,7 +254,7 @@ export function HRLocationsContent() {
                       <Circle
                         center={[formLat, formLng]}
                         radius={formRadius}
-                        pathOptions={{ color: '#2563eb', fillColor: '#3b82f6', fillOpacity: 0.15, weight: 2 }}
+                        pathOptions={{ color: '#4C808A', fillColor: '#4C808A', fillOpacity: 0.15, weight: 2 }}
                       />
                     </>
                   )}

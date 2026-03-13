@@ -282,6 +282,20 @@ export default function EmployeeDashboardPage() {
           </div>
         )}
 
+        {/* End-of-day: regular clock-in disabled until tomorrow */}
+        {!todayHoliday && clockStatus?.regular_clock_in_blocked && !isClockedIn && (
+          <div className="bg-amber-50 border border-amber-200 text-amber-800 px-4 py-3 rounded-lg text-sm flex items-center gap-2">
+            <Clock size={18} />
+            <span>
+              Regular clock-in is disabled until tomorrow at 6am.{' '}
+              <a href="/employee/overtime" className="font-semibold underline hover:text-amber-900">
+                Request Overtime
+              </a>
+              {' '}to use overtime clock-in if you still need to work.
+            </span>
+          </div>
+        )}
+
         {/* Feedback banners */}
         {actionMsg && (
           <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg text-sm flex items-center gap-2">
@@ -319,7 +333,7 @@ export default function EmployeeDashboardPage() {
             )}
           </div>
           <div className="flex flex-wrap gap-2">
-            {!isClockedIn && !todayHoliday && (
+            {!isClockedIn && !todayHoliday && !clockStatus?.regular_clock_in_blocked && (
               <>
                 <button
                   onClick={openQRModal}

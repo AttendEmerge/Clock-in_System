@@ -131,6 +131,8 @@ export interface ClockStatus {
   last_event: ClockEvent | null;
   today_events: ClockEvent[];
   total_minutes_today: number;
+  regular_clock_in_blocked?: boolean;
+  regular_clock_in_blocked_reason?: string;
 }
 
 export interface EmployeeDashboard {

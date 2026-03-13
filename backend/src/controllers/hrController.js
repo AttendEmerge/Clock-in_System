@@ -1098,6 +1098,8 @@ async function exportOvertimeReport(req, res) {
     const [rows] = await pool.query(
       `SELECT u.name as employee_name, d.name as department,
               COUNT(*) as total_requests,
+              SUM(CASE WHEN ot.overtime_type = 'regular'       THEN 1 ELSE 0 END) as regular_requests,
+              SUM(CASE WHEN ot.overtime_type = 'double'        THEN 1 ELSE 0 END) as double_requests,
               SUM(CASE WHEN ot.status = 'pending'              THEN 1 ELSE 0 END) as pending,
               SUM(CASE WHEN ot.status = 'supervisor_approved'  THEN 1 ELSE 0 END) as supervisor_approved,
               SUM(CASE WHEN ot.status = 'hr_approved'          THEN 1 ELSE 0 END) as hr_approved,
@@ -1112,10 +1114,10 @@ async function exportOvertimeReport(req, res) {
     );
 
     function csvCell(val) { const s = val == null ? '' : String(val); return `"${s.replace(/"/g, '""')}"`; }
-    const cols = ['Employee', 'Department', 'Total Requests', 'Pending', 'Supervisor Approved', 'HR Approved', 'Rejected'];
+    const cols = ['Employee', 'Department', 'Total Requests', 'Regular OT', 'Double OT', 'Pending', 'Supervisor Approved', 'HR Approved', 'Rejected'];
     const csvLines = [
       cols.map(csvCell).join(','),
-      ...rows.map(r => [r.employee_name, r.department || '', r.total_requests, r.pending, r.supervisor_approved, r.hr_approved, r.rejected].map(csvCell).join(',')),
+      ...rows.map(r => [r.employee_name, r.department || '', r.total_requests, r.regular_requests, r.double_requests, r.pending, r.supervisor_approved, r.hr_approved, r.rejected].map(csvCell).join(',')),
     ];
 
     res.setHeader('Content-Type', 'text/csv');
@@ -1137,6 +1139,8 @@ async function getOvertimeReportPreview(req, res) {
     const [rows] = await pool.query(
       `SELECT u.name as employee_name, d.name as department,
               COUNT(*) as total_requests,
+              SUM(CASE WHEN ot.overtime_type = 'regular'       THEN 1 ELSE 0 END) as regular_requests,
+              SUM(CASE WHEN ot.overtime_type = 'double'        THEN 1 ELSE 0 END) as double_requests,
               SUM(CASE WHEN ot.status = 'pending'              THEN 1 ELSE 0 END) as pending,
               SUM(CASE WHEN ot.status = 'supervisor_approved'  THEN 1 ELSE 0 END) as supervisor_approved,
               SUM(CASE WHEN ot.status = 'hr_approved'          THEN 1 ELSE 0 END) as hr_approved,

@@ -84,6 +84,7 @@ export interface OvertimeRequest {
   supervisor_name?: string;
   reason: string;
   requested_date: string;
+  overtime_type?: 'regular' | 'double';
   status: 'pending' | 'supervisor_approved' | 'hr_approved' | 'rejected';
   rejection_reason?: string;
   created_at: string;

@@ -102,6 +102,9 @@ export default function SupervisorOvertimePage() {
                       <div className="flex items-center gap-2 mb-1">
                         <span className="font-medium text-gray-900">{req.employee_name || `Employee #${req.employee_id}`}</span>
                         <Badge variant={statusVariant(req.status)}>{req.status.replace(/_/g, ' ')}</Badge>
+                        <Badge variant={req.overtime_type === 'double' ? 'warning' : 'neutral'}>
+                          {req.overtime_type === 'double' ? 'Double OT' : 'Regular OT'}
+                        </Badge>
                       </div>
                       <p className="text-sm text-gray-700">{req.reason}</p>
                       <p className="text-xs text-gray-400 mt-1">

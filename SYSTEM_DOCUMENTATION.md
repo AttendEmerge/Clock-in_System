@@ -361,6 +361,7 @@ Single-row table defining company work hours.
 | supervisor_id | INT | FK → users(id) |
 | reason | TEXT | |
 | requested_date | DATE | |
+| overtime_type | ENUM('regular','double') | Auto-set: regular = workday, double = weekend/holiday |
 | status | ENUM('pending','supervisor_approved','hr_approved','rejected') | |
 | supervisor_action_at | TIMESTAMP | |
 | hr_action_at | TIMESTAMP | |
@@ -912,6 +913,7 @@ Migrations are plain SQL files run in order. Each is designed to be run exactly 
 | `008_dynamic_leaves_and_holidays.sql` | Changes leave_type columns from ENUM to VARCHAR(50) for custom types, adds gender_applicable to policies, creates holidays table. |
 | `009_early_departures.sql` | Adds `early_departure_reason` column to clock_events for recording reasons when staff leave significantly before end of day. |
 | `010_password_reset_tokens.sql` | Extends `one_time_tokens.token_type` enum to include `password_reset` for email-based password reset flow. |
+| `011_overtime_types.sql` | Adds `overtime_type` ENUM('regular','double') to overtime_requests for classifying workday vs off-day overtime. |
 
 **How to run a migration (PowerShell):**
 

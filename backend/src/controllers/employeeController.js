@@ -1,6 +1,18 @@
 const pool = require('../db/pool');
 const { getHolidayDatesForYear } = require('./hrController');
 
+/**
+ * Returns true if the date is an off day (weekend or holiday).
+ * Used to classify overtime: off day = double, workday = regular.
+ */
+function isDateOffDay(dateStr, holidaySet) {
+  const d = new Date(dateStr.slice(0, 10) + 'T12:00:00');
+  const dow = d.getDay();
+  if (dow === 0 || dow === 6) return true; // Saturday or Sunday
+  if (holidaySet && holidaySet.has(dateStr.slice(0, 10))) return true;
+  return false;
+}
+
 function countWorkingDays(startDate, endDate, holidaySet) {
   let count = 0;
   const start = new Date(startDate);
@@ -140,12 +152,11 @@ async function requestOvertime(req, res) {
   if (!reason || !requested_date) {
     return res.status(400).json({ error: 'Reason and requested date are required' });
   }
-  const date = new Date(requested_date);
-  const dow  = date.getDay();
-  if (dow === 0 || dow === 6) {
-    return res.status(400).json({ error: 'Overtime cannot be requested for weekends' });
-  }
   try {
+    const year = new Date(requested_date.slice(0, 10)).getFullYear();
+    const holidaySet = await getHolidayDatesForYear(year);
+    const overtimeType = isDateOffDay(requested_date, holidaySet) ? 'double' : 'regular';
+
     const [deptRows] = await pool.query(
       'SELECT department_id FROM users WHERE id = ?', [req.user.id]
     );
@@ -162,9 +173,9 @@ async function requestOvertime(req, res) {
     }
 
     const [result] = await pool.query(
-      `INSERT INTO overtime_requests (employee_id, supervisor_id, reason, requested_date, status)
-       VALUES (?, ?, ?, ?, 'pending')`,
-      [req.user.id, supervisorId, reason, requested_date]
+      `INSERT INTO overtime_requests (employee_id, supervisor_id, reason, requested_date, overtime_type, status)
+       VALUES (?, ?, ?, ?, ?, 'pending')`,
+      [req.user.id, supervisorId, reason, requested_date, overtimeType]
     );
 
     return res.status(201).json({

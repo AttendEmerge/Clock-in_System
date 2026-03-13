@@ -266,10 +266,11 @@ function OvertimeReport({ departments }: { departments: Department[] }) {
       />
       <PreviewTable
         loading={loading}
-        headers={['Employee','Department','Total Requests','Pending','Supervisor Approved','HR Approved','Rejected']}
+        headers={['Employee','Department','Total Requests','Regular OT','Double OT','Pending','Supervisor Approved','HR Approved','Rejected']}
         rows={rows.map(r => [
           r.employee_name, r.department || '—',
-          r.total_requests, r.pending, r.supervisor_approved, r.hr_approved, r.rejected,
+          r.total_requests, r.regular_requests ?? 0, r.double_requests ?? 0,
+          r.pending, r.supervisor_approved, r.hr_approved, r.rejected,
         ] as (string | number | null)[])}
       />
     </div>

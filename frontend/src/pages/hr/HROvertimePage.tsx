@@ -87,6 +87,9 @@ export default function HROvertimePage() {
                       <div className="flex items-center gap-2 mb-1">
                         <span className="font-medium text-gray-900">{req.employee_name}</span>
                         <Badge variant={statusVariant(req.status)}>{req.status.replace(/_/g, ' ')}</Badge>
+                        <Badge variant={req.overtime_type === 'double' ? 'warning' : 'neutral'}>
+                          {req.overtime_type === 'double' ? 'Double OT' : 'Regular OT'}
+                        </Badge>
                       </div>
                       <p className="text-sm text-gray-700">{req.reason}</p>
                       <p className="text-xs text-gray-400 mt-1">
@@ -116,6 +119,7 @@ export default function HROvertimePage() {
               <div className="bg-gray-50 rounded-lg p-4 text-sm space-y-1">
                 <div className="flex justify-between"><span className="text-gray-500">Employee</span><span className="font-medium">{tokenModal.employee_name}</span></div>
                 <div className="flex justify-between"><span className="text-gray-500">Date</span><span>{tokenModal.requested_date}</span></div>
+                <div className="flex justify-between"><span className="text-gray-500">Type</span><span>{tokenModal.overtime_type === 'double' ? 'Double overtime (off day)' : 'Regular overtime (workday)'}</span></div>
                 <div className="flex justify-between"><span className="text-gray-500">Reason</span><span className="text-right max-w-48">{tokenModal.reason}</span></div>
               </div>
               {error && <div className="text-red-600 text-sm bg-red-50 rounded-lg px-3 py-2">{error}</div>}

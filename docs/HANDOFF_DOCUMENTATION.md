@@ -216,6 +216,9 @@ Example: `POST /api/clock/qr` → `routes/clock.js` → `authenticate` → `cloc
 | 006_gps_accuracy.sql | gps_accuracy on clock_events. |
 | 007_token_requests.sql | token_requests table. |
 | 008_dynamic_leaves_and_holidays.sql | leave_type as VARCHAR(50), gender_applicable, holidays table. |
+| 009_early_departures.sql | early_departures, early_return fields on leave. |
+| 010_password_reset_tokens.sql | Extends one_time_tokens for password reset. |
+| 011_overtime_types.sql | overtime_type ENUM('regular','double') on overtime_requests. |
 
 **Creating a new migration:** Add `009_description.sql`, keep it idempotent where possible (e.g. `ALTER TABLE ... ADD COLUMN IF NOT EXISTS` if your MySQL version supports it), and document it in SYSTEM_DOCUMENTATION and here.
 

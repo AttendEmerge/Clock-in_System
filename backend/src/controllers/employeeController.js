@@ -1,5 +1,9 @@
 const pool = require('../db/pool');
 const { getHolidayDatesForYear } = require('./hrController');
+const {
+  validateLeaveReturnDates,
+  applyLeaveReturnBalanceAdjustment,
+} = require('../services/leaveReturnService');
 
 /**
  * Returns true if the date is an off day (weekend or holiday).
@@ -317,18 +321,27 @@ async function logMyEarlyReturn(req, res) {
   if (!actual_return_date || !reason?.trim()) {
     return res.status(400).json({ error: 'actual_return_date and reason are required' });
   }
+  const conn = await pool.getConnection();
   try {
-    const [rows] = await pool.query(
+    const [rows] = await conn.query(
       'SELECT * FROM leave_requests WHERE id = ? AND user_id = ?',
       [id, req.user.id]
     );
-    if (rows.length === 0) return res.status(404).json({ error: 'Leave request not found' });
+    if (rows.length === 0) {
+      return res.status(404).json({ error: 'Leave request not found' });
+    }
     const lr = rows[0];
     if (!['active', 'approved'].includes(lr.status)) {
-      return res.status(400).json({ error: 'Early return can only be logged for active or approved leaves' });
+      return res.status(400).json({ error: 'A return can only be logged for active or approved leave' });
     }
 
-    await pool.query(
+    const dateErr = validateLeaveReturnDates(lr, actual_return_date);
+    if (dateErr.error) {
+      return res.status(400).json({ error: dateErr.error });
+    }
+
+    await conn.beginTransaction();
+    await conn.query(
       `UPDATE leave_requests SET
          status = 'early_return',
          actual_return_date = ?,
@@ -338,33 +351,19 @@ async function logMyEarlyReturn(req, res) {
       [actual_return_date, reason.trim(), req.user.id, id]
     );
 
-    // Refund unused days
-    if (actual_return_date < lr.end_date) {
-      const dayAfterReturn = new Date(actual_return_date);
-      dayAfterReturn.setDate(dayAfterReturn.getDate() + 1);
-      const unused = countWorkingDays(dayAfterReturn.toISOString().slice(0, 10), lr.end_date);
-      if (unused > 0) {
-        const year = new Date(lr.start_date).getFullYear();
-        const [balRows] = await pool.query(
-          'SELECT * FROM leave_balances WHERE user_id = ? AND leave_type = ? AND year = ?',
-          [lr.user_id, lr.leave_type, year]
-        );
-        if (balRows.length > 0) {
-          const bal = balRows[0];
-          const newUsed      = Math.max(0, parseFloat(bal.days_used) - unused);
-          const newRemaining = Math.max(0, parseFloat(bal.days_allocated) - newUsed);
-          await pool.query(
-            `UPDATE leave_balances SET days_used = ?, days_remaining = ? WHERE id = ?`,
-            [newUsed, newRemaining, bal.id]
-          );
-        }
-      }
+    const adj = await applyLeaveReturnBalanceAdjustment(lr, actual_return_date, conn);
+    if (adj.error) {
+      await conn.rollback();
+      return res.status(400).json({ error: adj.error });
     }
-
-    return res.json({ message: 'Early return logged successfully' });
+    await conn.commit();
+    return res.json({ message: 'Return logged successfully' });
   } catch (err) {
-    console.error('Log early return error:', err);
+    await conn.rollback().catch(() => {});
+    console.error('Log leave return error:', err);
     return res.status(500).json({ error: 'Server error' });
+  } finally {
+    conn.release();
   }
 }
 

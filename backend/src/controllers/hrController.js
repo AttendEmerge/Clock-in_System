@@ -1,6 +1,10 @@
 const bcrypt = require('bcryptjs');
 const pool = require('../db/pool');
 const { generateOneTimeToken } = require('../services/tokenService');
+const {
+  validateLeaveReturnDates,
+  applyLeaveReturnBalanceAdjustment,
+} = require('../services/leaveReturnService');
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -724,52 +728,46 @@ async function hrLogEarlyReturn(req, res) {
   if (!actual_return_date || !reason?.trim()) {
     return res.status(400).json({ error: 'actual_return_date and reason are required' });
   }
+  const conn = await pool.getConnection();
   try {
-    const [rows] = await pool.query('SELECT * FROM leave_requests WHERE id = ?', [id]);
-    if (rows.length === 0) return res.status(404).json({ error: 'Leave request not found' });
+    const [rows] = await conn.query('SELECT * FROM leave_requests WHERE id = ?', [id]);
+    if (rows.length === 0) {
+      return res.status(404).json({ error: 'Leave request not found' });
+    }
     const lr = rows[0];
     if (!['active', 'approved'].includes(lr.status)) {
-      return res.status(400).json({ error: 'Early return can only be logged for active or approved leaves' });
+      return res.status(400).json({ error: 'A return can only be logged for active or approved leave' });
     }
 
-    await pool.query(
+    const dateErr = validateLeaveReturnDates(lr, actual_return_date);
+    if (dateErr.error) {
+      return res.status(400).json({ error: dateErr.error });
+    }
+
+    await conn.beginTransaction();
+    await conn.query(
       `UPDATE leave_requests SET
          status = 'early_return',
          actual_return_date = ?,
          early_return_reason = ?,
          early_return_logged_by = ?
        WHERE id = ?`,
-      [actual_return_date, reason, req.user.id, id]
+      [actual_return_date, reason.trim(), req.user.id, id]
     );
 
-    // Refund unused working days back to balance
-    if (actual_return_date < lr.end_date) {
-      // Days between day after actual return and original end_date
-      const dayAfterReturn = new Date(actual_return_date);
-      dayAfterReturn.setDate(dayAfterReturn.getDate() + 1);
-      const unused = countWorkingDays(dayAfterReturn.toISOString().slice(0, 10), lr.end_date);
-      if (unused > 0) {
-        const year = new Date(lr.start_date).getFullYear();
-        const [balRows] = await pool.query(
-          'SELECT * FROM leave_balances WHERE user_id = ? AND leave_type = ? AND year = ?',
-          [lr.user_id, lr.leave_type, year]
-        );
-        if (balRows.length > 0) {
-          const bal = balRows[0];
-          const newUsed      = Math.max(0, parseFloat(bal.days_used) - unused);
-          const newRemaining = Math.max(0, parseFloat(bal.days_allocated) - newUsed);
-          await pool.query(
-            `UPDATE leave_balances SET days_used = ?, days_remaining = ? WHERE id = ?`,
-            [newUsed, newRemaining, bal.id]
-          );
-        }
-      }
+    const adj = await applyLeaveReturnBalanceAdjustment(lr, actual_return_date, conn);
+    if (adj.error) {
+      await conn.rollback();
+      return res.status(400).json({ error: adj.error });
     }
-
-    return res.json({ message: 'Early return logged' });
+    await conn.commit();
+    return res.json({ message: 'Return logged successfully' });
   } catch (err) {
-    console.error('HR log early return error:', err);
+    await conn.rollback().catch(() => {});
+    console.error('HR log leave return error:', err);
     return res.status(500).json({ error: 'Server error' });
+  } finally {
+    conn.release();
   }
 }
 
@@ -1194,8 +1192,15 @@ async function exportLeaveReport(req, res) {
            ELSE lr.days_requested
          END            AS days_actually_taken,
          lr.status,
-         CASE WHEN lr.actual_return_date IS NOT NULL THEN 'Yes' ELSE 'No' END  AS early_return,
-         COALESCE(lr.early_return_reason, '')                                  AS early_return_reason,
+         CASE
+           WHEN lr.actual_return_date IS NULL THEN ''
+           WHEN lr.actual_return_date < lr.end_date
+             THEN CONCAT('Early (', DATE_FORMAT(lr.actual_return_date, '%e %b %Y'), ')')
+           WHEN lr.actual_return_date > lr.end_date
+             THEN CONCAT('Late (', DATE_FORMAT(lr.actual_return_date, '%e %b %Y'), ')')
+           ELSE CONCAT('On time (', DATE_FORMAT(lr.actual_return_date, '%e %b %Y'), ')')
+         END AS return_type_display,
+         COALESCE(lr.early_return_reason, '')                                  AS return_reason,
          lr.hr_note,
          lr.created_at
        FROM leave_requests lr
@@ -1210,7 +1215,7 @@ async function exportLeaveReport(req, res) {
     const cols = [
       'Employee Name', 'Department', 'Gender', 'Leave Type',
       'Start Date', 'End Date', 'Days Requested', 'Days Actually Taken',
-      'Status', 'Early Return', 'Early Return Reason', 'HR Note', 'Submitted At',
+      'Status', 'Return type', 'Return reason', 'HR Note', 'Submitted At',
     ];
 
     function csvCell(val) {
@@ -1218,12 +1223,19 @@ async function exportLeaveReport(req, res) {
       return `"${s.replace(/"/g, '""')}"`;
     }
 
+    const statusLabel = (s) => {
+      if (s === 'early_return') return 'Return logged';
+      return String(s || '')
+        .replace(/_/g, ' ')
+        .replace(/\b\w/g, (c) => c.toUpperCase());
+    };
+
     const csvLines = [
       cols.map(csvCell).join(','),
       ...rows.map(r => [
         r.employee_name, r.department || '', r.gender, r.leave_type,
         r.start_date, r.end_date, r.days_requested, r.days_actually_taken,
-        r.status, r.early_return, r.early_return_reason, r.hr_note || '',
+        statusLabel(r.status), r.return_type_display, r.return_reason, r.hr_note || '',
         r.created_at,
       ].map(csvCell).join(',')),
     ];

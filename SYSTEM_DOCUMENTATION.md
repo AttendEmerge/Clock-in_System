@@ -552,7 +552,7 @@ Base URL: `/api`
 | GET | `/employee/token-requests` | List own token requests. |
 | POST | `/employee/leave-request` | Submit leave request. Body: `leave_type`, `description`, `start_date`, `end_date`. |
 | GET | `/employee/leave-requests` | List own leave requests with extensions. |
-| PATCH | `/employee/leave-requests/:id/early-return` | Log early return. Body: `actual_return_date`, `reason`. |
+| PATCH | `/employee/leave-requests/:id/early-return` | Log return from leave. Body: `actual_return_date`, `reason`. Compares `actual_return_date` to the request’s current `end_date` (including extensions): **early** refunds unused working days; **late** adds extra working days to `days_used`; **on time** leaves balance unchanged. Return date must be on/after `start_date` and not in the future. |
 | POST | `/employee/leave-requests/:id/extend` | Request leave extension. Body: `extra_days`, `reason`. |
 
 ### 7.4 Supervisor (`/api/supervisor`) — Roles: supervisor, hr
@@ -627,7 +627,7 @@ Base URL: `/api`
 |--------|------|-------------|
 | GET | `/hr/leave-requests` | List leave requests. Query: `status`, `user_id`, `from_date`, `to_date`. |
 | PATCH | `/hr/leave-requests/:id/review` | Approve/deny. Body: `action`, `hr_note`. |
-| PATCH | `/hr/leave-requests/:id/early-return` | Log early return. Body: `actual_return_date`, `reason`. |
+| PATCH | `/hr/leave-requests/:id/early-return` | Same as employee log return (HR may log on behalf of employee). Body: `actual_return_date`, `reason`. |
 | GET | `/hr/leave-requests/:id/extensions` | List extension requests. |
 | PATCH | `/hr/leave-extensions/:id/review` | Approve/deny extension. Body: `action`, `hr_note`. |
 | GET | `/hr/leave-report` | Export leave report as CSV. Query: `year`, `department_id`, `user_id`, `leave_type`, `status`. |
@@ -760,7 +760,7 @@ The app uses **React Context** for auth state and **local component state** (`us
 3. **Request**: Employee selects a leave type, date range, and description. The system calculates working days (excluding weekends and holidays).
 4. **Review**: HR approves or denies. On approval, the employee's balance is deducted.
 5. **Extensions**: While on leave, an employee can request an extension. HR reviews it.
-6. **Early return**: An employee or HR can log an early return, which credits back unused days.
+6. **Log return**: An employee or HR records the actual return date. The system classifies **early**, **on time**, or **late** versus the scheduled `end_date` and adjusts balances (refund if early, extra days used if late). The stored status remains `early_return` until cron completes the leave.
 7. **Status transitions** (automated via cron):
    - `approved` → `active` when `start_date` arrives
    - `active` → `completed` when `end_date` passes

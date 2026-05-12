@@ -9,6 +9,7 @@ import {
 import type { LeaveRequest, LeaveBalance } from '../../types';
 import { format } from 'date-fns';
 import { Plus, CalendarCheck, RotateCcw, ArrowRight, ChevronDown, ChevronUp } from 'lucide-react';
+import { formatReturnSummary, formatLeaveStatus } from '../../utils/leaveDisplay';
 
 function formatLeaveLabel(type: string): string {
   return type.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase()) + ' Leave';
@@ -99,14 +100,14 @@ export default function EmployeeLeavePage() {
     setEarlyError('');
     try {
       await logMyEarlyReturn(earlyModal.id, earlyDate, earlyReason);
-      setMsg('Early return logged. Unused days have been refunded to your balance.');
+      setMsg('Return logged. Your leave balance was updated if you returned early or late.');
       setEarlyModal(null);
       setEarlyDate('');
       setEarlyReason('');
       fetchAll();
     } catch (err: unknown) {
       const e = err as { response?: { data?: { error?: string } } };
-      setEarlyError(e.response?.data?.error || 'Failed to log early return.');
+      setEarlyError(e.response?.data?.error || 'Failed to log return.');
     }
   }
 
@@ -211,7 +212,7 @@ export default function EmployeeLeavePage() {
                             {formatLeaveLabel(lr.leave_type)}
                           </span>
                           <Badge variant={STATUS_VARIANT[lr.status] || 'neutral'}>
-                            {lr.status.replace('_', ' ')}
+                            {formatLeaveStatus(lr.status)}
                           </Badge>
                         </div>
                         <p className="text-sm text-app-muted">
@@ -230,10 +231,16 @@ export default function EmployeeLeavePage() {
                       <div className="flex flex-wrap gap-2 shrink-0">
                         {canEarlyReturn && (
                           <button
-                            onClick={() => { setEarlyModal(lr); setEarlyDate(today); setEarlyReason(''); setEarlyError(''); }}
+                            onClick={() => {
+                              setEarlyModal(lr);
+                              const s = String(lr.start_date).slice(0, 10);
+                              setEarlyDate(today >= s ? today : s);
+                              setEarlyReason('');
+                              setEarlyError('');
+                            }}
                             className="flex items-center gap-1.5 text-xs bg-amber-50 border border-amber-200 text-amber-700 hover:bg-amber-100 px-3 py-1.5 rounded-lg"
                           >
-                            <RotateCcw size={12} /> Early Return
+                            <RotateCcw size={12} /> Log return
                           </button>
                         )}
                         {canExtend && (
@@ -259,8 +266,8 @@ export default function EmployeeLeavePage() {
                     {/* Early return detail */}
                     {lr.actual_return_date && (
                       <div className="px-4 pb-3">
-                        <p className="text-xs text-amber-700 bg-amber-50 rounded px-3 py-2">
-                          Early return on {format(new Date(lr.actual_return_date), 'd MMM yyyy')}: {lr.early_return_reason}
+                        <p className="text-xs text-amber-700 bg-amber-50 dark:bg-amber-950/30 dark:text-amber-200 rounded px-3 py-2">
+                          {formatReturnSummary(lr.actual_return_date, lr.end_date, lr.early_return_reason)}
                         </p>
                       </div>
                     )}
@@ -378,38 +385,41 @@ export default function EmployeeLeavePage() {
 
       {/* ── Early Return Modal ────────────────────────────────────────── */}
       {earlyModal && (
-        <Modal title="Log Early Return" onClose={() => setEarlyModal(null)} size="sm">
+        <Modal title="Log return" onClose={() => setEarlyModal(null)} size="sm">
           <form onSubmit={handleEarlyReturn} className="space-y-4">
             {earlyError && <div className="text-red-600 text-sm bg-red-50 rounded-lg px-3 py-2">{earlyError}</div>}
             <p className="text-sm text-app-muted">
-              Recording an early return will refund unused days to your balance.
+              Enter the date you actually returned. The system compares this to your scheduled end date (
+              {format(new Date(earlyModal.end_date), 'd MMM yyyy')}) and records <strong>early</strong>,{' '}
+              <strong>on time</strong>, or <strong>late</strong>. Early returns can refund unused days; late returns may
+              adjust your balance for extra days.
             </p>
             <div>
-              <label className="block text-sm font-medium text-app mb-1">Actual Return Date</label>
+              <label className="block text-sm font-medium text-app mb-1">Actual return date</label>
               <input
                 type="date"
                 value={earlyDate}
                 onChange={e => setEarlyDate(e.target.value)}
                 required
-                min={earlyModal.start_date}
-                max={earlyModal.end_date}
+                min={String(earlyModal.start_date).slice(0, 10)}
+                max={today}
                 className="w-full px-3 py-2 border border-app-input-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-app-accent"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-app mb-1">Reason for Early Return</label>
+              <label className="block text-sm font-medium text-app mb-1">Reason for return</label>
               <textarea
                 value={earlyReason}
                 onChange={e => setEarlyReason(e.target.value)}
                 required
                 rows={3}
-                placeholder="Why are you returning early?"
+                placeholder="Brief reason for this return date…"
                 className="w-full px-3 py-2 border border-app-input-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-app-accent resize-none"
               />
             </div>
             <button type="submit"
               className="w-full bg-amber-600 hover:bg-amber-700 text-white py-2.5 rounded-lg text-sm font-medium">
-              Log Early Return
+              Log return
             </button>
           </form>
         </Modal>

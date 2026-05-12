@@ -9,6 +9,7 @@ import {
 import type { LeaveRequest } from '../../types';
 import { format } from 'date-fns';
 import { CheckCircle2, XCircle, RotateCcw, ChevronDown, ChevronUp, ArrowRight } from 'lucide-react';
+import { formatReturnSummary, formatLeaveStatus } from '../../utils/leaveDisplay';
 
 type TabKey = 'pending' | 'active' | 'extensions' | 'all';
 
@@ -65,6 +66,8 @@ export function HRLeaveContent() {
     setLoading(false);
   }
 
+  const todayStr = new Date().toISOString().slice(0, 10);
+
   const pending    = allRequests.filter(r => r.status === 'pending');
   const active     = allRequests.filter(r => ['active', 'approved'].includes(r.status));
   const withPendingExt = allRequests.filter(r =>
@@ -106,7 +109,7 @@ export function HRLeaveContent() {
     setEarlyError('');
     try {
       await hrLogEarlyReturn(earlyModal.id, earlyDate, earlyReason);
-      setMsg('Early return logged and unused days refunded.');
+      setMsg('Return logged. Employee balance was updated if applicable.');
       setEarlyModal(null);
       setEarlyDate('');
       setEarlyReason('');
@@ -195,7 +198,7 @@ export function HRLeaveContent() {
                         <span className="font-semibold text-app">{lr.employee_name}</span>
                         <span className="text-xs text-app-subtle">{lr.department_name}</span>
                         <Badge variant={STATUS_VARIANT[lr.status] || 'neutral'}>
-                          {lr.status.replace('_', ' ')}
+                          {formatLeaveStatus(lr.status)}
                         </Badge>
                       </div>
                       <p className="text-sm text-app">
@@ -211,8 +214,8 @@ export function HRLeaveContent() {
                         <p className="text-xs mt-1 text-orange-600">HR note: {lr.hr_note}</p>
                       )}
                       {lr.actual_return_date && (
-                        <p className="text-xs mt-1 text-amber-700 bg-amber-50 rounded px-2 py-1 inline-block">
-                          Returned early on {format(new Date(lr.actual_return_date), 'd MMM yyyy')}: {lr.early_return_reason}
+                        <p className="text-xs mt-1 text-amber-700 bg-amber-50 dark:bg-amber-950/30 dark:text-amber-200 rounded px-2 py-1 inline-block">
+                          {formatReturnSummary(lr.actual_return_date, lr.end_date, lr.early_return_reason)}
                         </p>
                       )}
                     </div>
@@ -237,10 +240,16 @@ export function HRLeaveContent() {
                       )}
                       {['active', 'approved'].includes(lr.status) && (
                         <button
-                          onClick={() => { setEarlyModal(lr); setEarlyDate(new Date().toISOString().slice(0, 10)); setEarlyReason(''); setEarlyError(''); }}
+                          onClick={() => {
+                            setEarlyModal(lr);
+                            const s = String(lr.start_date).slice(0, 10);
+                            setEarlyDate(todayStr >= s ? todayStr : s);
+                            setEarlyReason('');
+                            setEarlyError('');
+                          }}
                           className="flex items-center gap-1.5 text-xs bg-amber-50 border border-amber-200 text-amber-700 hover:bg-amber-100 px-3 py-1.5 rounded-lg"
                         >
-                          <RotateCcw size={12} /> Log Early Return
+                          <RotateCcw size={12} /> Log return
                         </button>
                       )}
                       {(lr.extensions || []).length > 0 && (
@@ -334,38 +343,40 @@ export function HRLeaveContent() {
 
       {/* ── HR Early Return Modal ──────────────────────────────────────── */}
       {earlyModal && (
-        <Modal title={`Log Early Return — ${earlyModal.employee_name}`} onClose={() => setEarlyModal(null)} size="sm">
+        <Modal title={`Log return — ${earlyModal.employee_name}`} onClose={() => setEarlyModal(null)} size="sm">
           <form onSubmit={handleEarlyReturn} className="space-y-4">
             {earlyError && <div className="text-red-600 text-sm bg-red-50 rounded-lg px-3 py-2">{earlyError}</div>}
             <p className="text-sm text-app-muted">
-              Scheduled leave until {format(new Date(earlyModal.end_date), 'd MMM yyyy')}.
-              Unused days will be refunded to the employee's balance.
+              Scheduled leave ends {format(new Date(earlyModal.end_date), 'd MMM yyyy')}. Enter the actual return date:
+              the system records <strong>early</strong>, <strong>on time</strong>, or <strong>late</strong> and adjusts
+              balances (refund if early, extra days if late).
             </p>
             <div>
-              <label className="block text-sm font-medium text-app mb-1">Actual Return Date</label>
+              <label className="block text-sm font-medium text-app mb-1">Actual return date</label>
               <input
                 type="date"
                 value={earlyDate}
                 onChange={e => setEarlyDate(e.target.value)}
                 required
-                min={earlyModal.start_date}
-                max={earlyModal.end_date}
+                min={String(earlyModal.start_date).slice(0, 10)}
+                max={todayStr}
                 className="w-full px-3 py-2 border border-app-input-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-app-accent"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-app mb-1">Reason</label>
+              <label className="block text-sm font-medium text-app mb-1">Reason for return</label>
               <textarea
                 value={earlyReason}
                 onChange={e => setEarlyReason(e.target.value)}
                 required
                 rows={2}
+                placeholder="Brief reason…"
                 className="w-full px-3 py-2 border border-app-input-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-app-accent resize-none"
               />
             </div>
             <button type="submit"
               className="w-full bg-amber-600 hover:bg-amber-700 text-white py-2.5 rounded-lg text-sm font-medium">
-              Confirm Early Return
+              Log return
             </button>
           </form>
         </Modal>

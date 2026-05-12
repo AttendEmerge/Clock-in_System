@@ -9,6 +9,7 @@ import {
 import type { Department } from '../../types';
 import { format } from 'date-fns';
 import { Download, Search } from 'lucide-react';
+import { formatReturnType, formatLeaveStatus } from '../../utils/leaveDisplay';
 
 type Tab = 'attendance' | 'leave' | 'overtime';
 
@@ -199,7 +200,7 @@ function LeaveReport({ departments }: { departments: Department[] }) {
             <select value={filters.status} onChange={e => setFilters({ ...filters, status: e.target.value })}
               className="w-full px-3 py-2 border border-app-input-border rounded-lg text-sm focus:outline-none">
               <option value="">All</option>
-              {ALL_STATUSES.map(s => <option key={s} value={s}>{s.replace('_',' ')}</option>)}
+              {ALL_STATUSES.map(s => <option key={s} value={s}>{formatLeaveStatus(s)}</option>)}
             </select>
           </div>
         </div>
@@ -217,13 +218,13 @@ function LeaveReport({ departments }: { departments: Department[] }) {
       </div>
       <PreviewTable
         loading={loading}
-        headers={['Employee','Department','Gender','Leave Type','Start','End','Days','Status','Early Return','HR Note','Submitted']}
+        headers={['Employee','Department','Gender','Leave Type','Start','End','Days','Status','Return type (early / late)','HR Note','Submitted']}
         rows={(rows as Record<string, unknown>[]).map(r => [
           r.employee_name, r.department_name || '—', r.gender,
           LEAVE_LABELS[r.leave_type as string] || r.leave_type,
           fmtDate(r.start_date as string), fmtDate(r.end_date as string), r.days_requested,
-          String(r.status).replace('_',' '),
-          r.actual_return_date ? `Yes (${fmtDate(r.actual_return_date as string)})` : 'No',
+          formatLeaveStatus(String(r.status)),
+          formatReturnType(r.actual_return_date as string | undefined, r.end_date as string | undefined),
           r.hr_note || '—', fmtDate(r.created_at as string),
         ] as (string | number | null)[])}
       />

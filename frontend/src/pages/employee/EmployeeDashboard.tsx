@@ -252,7 +252,7 @@ export default function EmployeeDashboardPage() {
     return (
       <Layout>
         <div className="flex items-center justify-center h-64">
-          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600" />
+          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-app-accent" />
         </div>
       </Layout>
     );
@@ -266,8 +266,8 @@ export default function EmployeeDashboardPage() {
 
         {/* Header */}
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">My Dashboard</h1>
-          <p className="text-gray-500 text-sm mt-1">
+          <h1 className="text-2xl font-bold text-app">My Dashboard</h1>
+          <p className="text-app-muted text-sm mt-1">
             {format(new Date(), 'EEEE, d MMMM yyyy')}
           </p>
         </div>
@@ -315,8 +315,8 @@ export default function EmployeeDashboardPage() {
           ${isClockedIn ? 'bg-green-50 border border-green-200' : 'bg-blue-50 border border-blue-200'}`}>
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <div className={`w-2.5 h-2.5 rounded-full ${isClockedIn ? 'bg-green-500 animate-pulse' : 'bg-gray-400'}`} />
-              <span className={`font-semibold ${isClockedIn ? 'text-green-700' : 'text-gray-600'}`}>
+              <div className={`w-2.5 h-2.5 rounded-full ${isClockedIn ? 'bg-green-500 animate-pulse' : 'bg-app-subtle'}`} />
+              <span className={`font-semibold ${isClockedIn ? 'text-green-700' : 'text-app-muted'}`}>
                 {isClockedIn ? 'Currently Clocked In' : 'Not Clocked In'}
               </span>
             </div>
@@ -327,7 +327,7 @@ export default function EmployeeDashboardPage() {
               </p>
             )}
             {!isClockedIn && clockStatus?.last_event && clockStatus.last_event.event_type === 'clock_out' && (
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-app-muted">
                 Last clocked out {formatDistanceToNow(new Date(clockStatus.last_event.event_timestamp), { addSuffix: true })}
               </p>
             )}
@@ -337,13 +337,13 @@ export default function EmployeeDashboardPage() {
               <>
                 <button
                   onClick={openQRModal}
-                  className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+                  className="flex items-center gap-2 bg-app-accent hover:bg-app-accent-hover text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
                 >
                   <QrCode size={16} /> Show QR Code
                 </button>
                 <button
                   onClick={openTokenRequestModal}
-                  className="flex items-center gap-2 bg-white border border-blue-300 text-blue-700 hover:bg-blue-50 px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+                  className="flex items-center gap-2 bg-app-surface border border-blue-300 text-app-nav-active-text hover:bg-blue-50 px-4 py-2 rounded-lg text-sm font-medium transition-colors"
                 >
                   <KeyRound size={16} /> Request Token
                 </button>
@@ -360,7 +360,7 @@ export default function EmployeeDashboardPage() {
             )}
             <button
               onClick={() => setShowOTModal(true)}
-              className="flex items-center gap-2 bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+              className="flex items-center gap-2 bg-app-surface border border-app-input-border text-app hover:bg-app-page px-4 py-2 rounded-lg text-sm font-medium transition-colors"
             >
               Request Overtime
             </button>
@@ -373,9 +373,9 @@ export default function EmployeeDashboardPage() {
             <p className="text-sm font-semibold text-yellow-800 mb-2">You have pending tokens:</p>
             <div className="flex flex-wrap gap-2">
               {dashboard.pending_tokens.map(t => (
-                <div key={t.id} className="bg-white border border-yellow-200 rounded-lg px-3 py-2 text-sm">
-                  <span className="font-mono font-bold text-gray-900">{t.plain_token}</span>
-                  <span className="text-gray-500 ml-2">({t.token_type})</span>
+                <div key={t.id} className="bg-app-surface border border-yellow-200 rounded-lg px-3 py-2 text-sm">
+                  <span className="font-mono font-bold text-app">{t.plain_token}</span>
+                  <span className="text-app-muted ml-2">({t.token_type})</span>
                   <span className="text-yellow-600 ml-2 text-xs">expires {format(new Date(t.expires_at), 'HH:mm')}</span>
                 </div>
               ))}
@@ -418,8 +418,8 @@ export default function EmployeeDashboardPage() {
         {/* Leave Balances */}
         <div>
           <div className="flex items-center justify-between mb-3">
-            <h2 className="text-lg font-semibold text-gray-900">Leave Balances</h2>
-            <a href="/employee/leave" className="text-sm text-blue-600 hover:underline">Manage leave →</a>
+            <h2 className="text-lg font-semibold text-app">Leave Balances</h2>
+            <a href="/employee/leave" className="text-sm text-app-accent hover:underline">Manage leave →</a>
           </div>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             {dashboard?.leave_balances.map(lb => {
@@ -427,20 +427,20 @@ export default function EmployeeDashboardPage() {
                 ? Math.round(((lb.days_used ?? 0) / lb.days_allocated) * 100)
                 : 0;
               return (
-                <div key={lb.id} className="bg-white rounded-xl border border-gray-100 p-4 shadow-sm">
+                <div key={lb.id} className="bg-app-surface rounded-xl border border-app-border-subtle p-4 shadow-sm">
                   <div className={`w-9 h-9 rounded-lg flex items-center justify-center mb-3 ${
-                    lb.leave_type === 'paid'      ? 'bg-blue-50 text-blue-600' :
+                    lb.leave_type === 'paid'      ? 'bg-blue-50 text-app-accent' :
                     lb.leave_type === 'sick'      ? 'bg-red-50 text-red-600' :
                     lb.leave_type === 'maternity' ? 'bg-purple-50 text-purple-600' :
                     'bg-green-50 text-green-600'
                   }`}>
                     {leaveIcons[lb.leave_type] || defaultLeaveIcon}
                   </div>
-                  <p className="text-2xl font-bold text-gray-900">{lb.days_remaining}</p>
-                  <p className="text-xs text-gray-500 mt-0.5 capitalize">{lb.leave_type} Leave</p>
-                  <p className="text-xs text-gray-400">of {lb.days_allocated ?? lb.days_remaining} days remaining</p>
+                  <p className="text-2xl font-bold text-app">{lb.days_remaining}</p>
+                  <p className="text-xs text-app-muted mt-0.5 capitalize">{lb.leave_type} Leave</p>
+                  <p className="text-xs text-app-subtle">of {lb.days_allocated ?? lb.days_remaining} days remaining</p>
                   {(lb.days_allocated ?? 0) > 0 && (
-                    <div className="mt-2 w-full bg-gray-100 rounded-full h-1">
+                    <div className="mt-2 w-full bg-app-border-subtle rounded-full h-1">
                       <div className="bg-blue-500 h-1 rounded-full" style={{ width: `${Math.min(pct, 100)}%` }} />
                     </div>
                   )}
@@ -453,26 +453,26 @@ export default function EmployeeDashboardPage() {
         {/* Recent Events */}
         <div>
           <div className="flex items-center justify-between mb-3">
-            <h2 className="text-lg font-semibold text-gray-900">Recent Activity</h2>
-            <button onClick={fetchAll} className="text-gray-400 hover:text-gray-600">
+            <h2 className="text-lg font-semibold text-app">Recent Activity</h2>
+            <button onClick={fetchAll} className="text-app-subtle hover:text-app-muted">
               <RefreshCw size={16} />
             </button>
           </div>
-          <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+          <div className="bg-app-surface rounded-xl border border-app-border-subtle shadow-sm overflow-hidden">
             {clockStatus?.today_events.length === 0 ? (
-              <p className="text-center text-gray-400 py-8 text-sm">No activity today</p>
+              <p className="text-center text-app-subtle py-8 text-sm">No activity today</p>
             ) : (
-              <div className="divide-y divide-gray-50">
+              <div className="divide-y divide-app-border-subtle">
                 {clockStatus?.today_events.map(ev => (
                   <div key={ev.id} className="flex items-center justify-between px-4 py-3">
                     <div className="flex items-center gap-3">
                       <div className={`w-2 h-2 rounded-full ${ev.event_type === 'clock_in' ? 'bg-green-500' : 'bg-red-400'}`} />
                       <div>
-                        <p className="text-sm font-medium text-gray-900">
+                        <p className="text-sm font-medium text-app">
                           {ev.event_type === 'clock_in' ? 'Clocked In' : 'Clocked Out'}
                           {ev.is_overtime ? <span className="ml-1 text-xs text-orange-600">(Overtime)</span> : null}
                         </p>
-                        <p className="text-xs text-gray-500">{ev.method} · {format(new Date(ev.event_timestamp), 'HH:mm:ss')}</p>
+                        <p className="text-xs text-app-muted">{ev.method} · {format(new Date(ev.event_timestamp), 'HH:mm:ss')}</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
@@ -490,14 +490,14 @@ export default function EmployeeDashboardPage() {
         {/* Overtime requests */}
         {dashboard?.overtime_requests && dashboard.overtime_requests.length > 0 && (
           <div>
-            <h2 className="text-lg font-semibold text-gray-900 mb-3">Overtime Requests</h2>
-            <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
-              <div className="divide-y divide-gray-50">
+            <h2 className="text-lg font-semibold text-app mb-3">Overtime Requests</h2>
+            <div className="bg-app-surface rounded-xl border border-app-border-subtle shadow-sm overflow-hidden">
+              <div className="divide-y divide-app-border-subtle">
                 {dashboard.overtime_requests.map(ot => (
                   <div key={ot.id} className="px-4 py-3 flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium text-gray-900">{ot.requested_date}</p>
-                      <p className="text-xs text-gray-500">{ot.reason}</p>
+                      <p className="text-sm font-medium text-app">{ot.requested_date}</p>
+                      <p className="text-xs text-app-muted">{ot.reason}</p>
                     </div>
                     <Badge variant={
                       ot.status === 'hr_approved' ? 'success' :
@@ -522,7 +522,7 @@ export default function EmployeeDashboardPage() {
             {/* Instructions */}
             <div className="bg-blue-50 rounded-xl p-3 text-sm text-blue-800">
               <p className="font-semibold mb-1">How to clock in:</p>
-              <ol className="list-decimal list-inside space-y-0.5 text-blue-700">
+              <ol className="list-decimal list-inside space-y-0.5 text-app-nav-active-text">
                 <li>Open your phone's camera app</li>
                 <li>Point it at the QR code below</li>
                 <li>Tap the link that appears on your screen</li>
@@ -534,11 +534,11 @@ export default function EmployeeDashboardPage() {
             {/* QR image */}
             <div className="flex flex-col items-center">
               {qrLoading ? (
-                <div className="w-56 h-56 flex items-center justify-center bg-gray-50 rounded-xl border border-gray-200">
-                  <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600" />
+                <div className="w-56 h-56 flex items-center justify-center bg-app-page rounded-xl border border-app-border">
+                  <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-app-accent" />
                 </div>
               ) : qrImage ? (
-                <div className="p-3 bg-white border-2 border-gray-200 rounded-xl shadow-sm">
+                <div className="p-3 bg-app-surface border-2 border-app-border rounded-xl shadow-sm">
                   <img src={qrImage} alt="Clock-in QR Code" className="w-52 h-52" />
                 </div>
               ) : (
@@ -550,23 +550,23 @@ export default function EmployeeDashboardPage() {
 
             {/* Countdown */}
             <div className="flex items-center justify-center gap-2 text-sm">
-              <Timer size={15} className={qrSecondsLeft < 30 ? 'text-red-500' : 'text-gray-400'} />
-              <span className={`font-mono ${qrSecondsLeft < 30 ? 'text-red-600 font-bold' : 'text-gray-500'}`}>
+              <Timer size={15} className={qrSecondsLeft < 30 ? 'text-red-500' : 'text-app-subtle'} />
+              <span className={`font-mono ${qrSecondsLeft < 30 ? 'text-red-600 font-bold' : 'text-app-muted'}`}>
                 Refreshes in {Math.floor(qrSecondsLeft / 60)}:{String(qrSecondsLeft % 60).padStart(2, '0')}
               </span>
-              <button onClick={loadQR} className="text-blue-500 hover:text-blue-700 ml-1">
+              <button onClick={loadQR} className="text-blue-500 hover:text-app-nav-active-text ml-1">
                 <RefreshCw size={13} />
               </button>
             </div>
 
             {/* Waiting indicator */}
-            <div className="flex items-center justify-center gap-2 bg-gray-50 rounded-lg py-2 text-sm text-gray-500">
+            <div className="flex items-center justify-center gap-2 bg-app-page rounded-lg py-2 text-sm text-app-muted">
               <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
               Waiting for your phone to scan…
             </div>
 
             <button onClick={closeQRModal}
-              className="w-full border border-gray-300 text-gray-600 py-2 rounded-lg text-sm hover:bg-gray-50">
+              className="w-full border border-app-input-border text-app-muted py-2 rounded-lg text-sm hover:bg-app-page">
               Cancel
             </button>
           </div>
@@ -577,19 +577,19 @@ export default function EmployeeDashboardPage() {
       {showTokenRequestModal && (
         <Modal title="Request Clock-in Token" onClose={() => setShowTokenRequestModal(false)} size="sm">
           <form onSubmit={handleTokenRequest} className="space-y-4">
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-app-muted">
               Request a clock-in token from HR. Once approved, you will be automatically clocked in.
             </p>
             {actionError && (
               <div className="text-red-600 text-sm bg-red-50 rounded-lg px-3 py-2">{actionError}</div>
             )}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Your Location</label>
+              <label className="block text-sm font-medium text-app mb-1">Your Location</label>
               <select
                 value={tokenReqLocationId}
                 onChange={e => setTokenReqLocationId(e.target.value)}
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-app-input-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-app-accent"
               >
                 <option value="">Select your location...</option>
                 {acceptableLocations.map(loc => (
@@ -598,20 +598,20 @@ export default function EmployeeDashboardPage() {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Reason</label>
+              <label className="block text-sm font-medium text-app mb-1">Reason</label>
               <textarea
                 value={tokenReqReason}
                 onChange={e => setTokenReqReason(e.target.value)}
                 required
                 rows={3}
                 placeholder="Why do you need a token? (e.g. QR scanner not working, phone unavailable...)"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                className="w-full px-3 py-2 border border-app-input-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-app-accent resize-none"
               />
             </div>
             <button
               type="submit"
               disabled={!tokenReqLocationId || !tokenReqReason.trim()}
-              className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300 text-white py-2.5 rounded-lg text-sm font-medium"
+              className="w-full bg-app-accent hover:bg-app-accent-hover disabled:bg-blue-300 text-white py-2.5 rounded-lg text-sm font-medium"
             >
               Submit Request
             </button>
@@ -623,34 +623,34 @@ export default function EmployeeDashboardPage() {
       {showOTModal && (
         <Modal title="Request Overtime" onClose={() => setShowOTModal(false)} size="sm">
           <form onSubmit={handleOTRequest} className="space-y-4">
-            <p className="text-sm text-gray-500">Submit an overtime request to your supervisor.</p>
+            <p className="text-sm text-app-muted">Submit an overtime request to your supervisor.</p>
             {actionError && (
               <div className="text-red-600 text-sm bg-red-50 rounded-lg px-3 py-2">{actionError}</div>
             )}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Date</label>
+              <label className="block text-sm font-medium text-app mb-1">Date</label>
               <input
                 type="date"
                 value={otDate}
                 onChange={e => setOtDate(e.target.value)}
                 required
                 min={new Date().toISOString().slice(0, 10)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-app-input-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-app-accent"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Reason</label>
+              <label className="block text-sm font-medium text-app mb-1">Reason</label>
               <textarea
                 value={otReason}
                 onChange={e => setOtReason(e.target.value)}
                 required
                 rows={3}
                 placeholder="Describe why overtime is needed..."
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                className="w-full px-3 py-2 border border-app-input-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-app-accent resize-none"
               />
             </div>
             <button type="submit"
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-lg text-sm font-medium">
+              className="w-full bg-app-accent hover:bg-app-accent-hover text-white py-2.5 rounded-lg text-sm font-medium">
               Submit Request
             </button>
           </form>
@@ -661,21 +661,21 @@ export default function EmployeeDashboardPage() {
       {showEarlyModal && (
         <Modal title="Clock Out" onClose={() => setShowEarlyModal(false)} size="sm">
           <div className="space-y-4">
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-app-muted">
               You are leaving significantly earlier than your normal end time. Please share a short reason.
               This helps your supervisor and HR understand and plan around early departures.
             </p>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Reason (required)</label>
+              <label className="block text-sm font-medium text-app mb-1">Reason (required)</label>
               <textarea
                 value={earlyReason}
                 onChange={e => setEarlyReason(e.target.value)}
                 rows={3}
                 maxLength={1000}
                 placeholder="E.g. medical appointment, family emergency, study commitment..."
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                className="w-full px-3 py-2 border border-app-input-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-app-accent resize-none"
               />
-              <p className="mt-1 text-xs text-gray-400">
+              <p className="mt-1 text-xs text-app-subtle">
                 This note is visible to your supervisor and HR only.
               </p>
             </div>
@@ -683,7 +683,7 @@ export default function EmployeeDashboardPage() {
               <button
                 type="button"
                 onClick={() => setShowEarlyModal(false)}
-                className="px-3 py-2 rounded-lg text-sm border border-gray-300 text-gray-600 hover:bg-gray-50"
+                className="px-3 py-2 rounded-lg text-sm border border-app-input-border text-app-muted hover:bg-app-page"
               >
                 Cancel
               </button>
@@ -704,14 +704,14 @@ export default function EmployeeDashboardPage() {
       {showConfirmModal && (
         <Modal title="Clock Out" onClose={() => setShowConfirmModal(false)} size="sm">
           <div className="space-y-4">
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-app-muted">
               Are you sure you want to clock out?
             </p>
             <div className="flex gap-2 justify-end">
               <button
                 type="button"
                 onClick={() => setShowConfirmModal(false)}
-                className="px-3 py-2 rounded-lg text-sm border border-gray-300 text-gray-600 hover:bg-gray-50"
+                className="px-3 py-2 rounded-lg text-sm border border-app-input-border text-app-muted hover:bg-app-page"
               >
                 Cancel
               </button>

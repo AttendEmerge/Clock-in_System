@@ -97,14 +97,14 @@ export function HRLeavePolicyContent() {
       <div className="space-y-6 max-w-3xl">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Leave Policy</h1>
-            <p className="text-sm text-gray-500 mt-0.5">
+            <h1 className="text-2xl font-bold text-app">Leave Policy</h1>
+            <p className="text-sm text-app-muted mt-0.5">
               Manage company-wide leave types and their default allocations. Changes apply to new employees automatically.
             </p>
           </div>
           <button
             onClick={() => { setShowAdd(true); setError(''); }}
-            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium"
+            className="flex items-center gap-2 bg-app-accent hover:bg-app-accent-hover text-white px-4 py-2 rounded-lg text-sm font-medium"
           >
             <Plus size={16} /> Add Leave Type
           </button>
@@ -115,29 +115,29 @@ export function HRLeavePolicyContent() {
 
         {loading ? (
           <div className="flex justify-center py-12">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" />
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-app-accent" />
           </div>
         ) : policies.length === 0 ? (
-          <div className="bg-white rounded-xl border border-gray-100 p-8 text-center text-gray-400 text-sm">
+          <div className="bg-app-surface rounded-xl border border-app-border-subtle p-8 text-center text-app-subtle text-sm">
             No leave types configured yet. Click <strong>Add Leave Type</strong> to get started.
           </div>
         ) : (
-          <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+          <div className="bg-app-surface rounded-xl border border-app-border-subtle shadow-sm overflow-hidden">
             <table className="w-full text-sm">
-              <thead className="bg-gray-50 border-b border-gray-100">
+              <thead className="bg-app-page border-b border-app-border-subtle">
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Leave Type</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Default Days</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Applies To</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Actions</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-app-muted uppercase">Leave Type</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-app-muted uppercase">Default Days</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-app-muted uppercase">Applies To</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-app-muted uppercase">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-50">
+              <tbody className="divide-y divide-app-border-subtle">
                 {policies.map(p => {
                   const isEditing = editType === p.leave_type;
                   return (
-                    <tr key={p.leave_type} className="hover:bg-gray-50">
-                      <td className="px-4 py-3 font-medium text-gray-900">{formatLabel(p.leave_type)}</td>
+                    <tr key={p.leave_type} className="hover:bg-app-page">
+                      <td className="px-4 py-3 font-medium text-app">{formatLabel(p.leave_type)}</td>
                       <td className="px-4 py-3">
                         {isEditing ? (
                           <input
@@ -146,18 +146,18 @@ export function HRLeavePolicyContent() {
                             onChange={e => setEditForm({ ...editForm, default_days: Math.floor(Number(e.target.value)) })}
                             min={0}
                             step={1}
-                            className="w-20 px-2 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="w-20 px-2 py-1 border border-app-input-border rounded text-sm focus:outline-none focus:ring-2 focus:ring-app-accent"
                           />
                         ) : (
                           <span>{p.default_days} days</span>
                         )}
                       </td>
-                      <td className="px-4 py-3 text-gray-500">
+                      <td className="px-4 py-3 text-app-muted">
                         {isEditing ? (
                           <select
                             value={editForm.gender_applicable}
                             onChange={e => setEditForm({ ...editForm, gender_applicable: e.target.value })}
-                            className="px-2 py-1 border border-gray-300 rounded text-sm focus:outline-none"
+                            className="px-2 py-1 border border-app-input-border rounded text-sm focus:outline-none"
                           >
                             <option value="all">All</option>
                             <option value="male">Male only</option>
@@ -174,13 +174,13 @@ export function HRLeavePolicyContent() {
                               <button
                                 onClick={() => handleSave(p.leave_type)}
                                 disabled={saving === p.leave_type}
-                                className="flex items-center gap-1 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded text-xs font-medium disabled:opacity-50"
+                                className="flex items-center gap-1 px-3 py-1.5 bg-app-accent hover:bg-app-accent-hover text-white rounded text-xs font-medium disabled:opacity-50"
                               >
                                 <Save size={13} /> {saving === p.leave_type ? 'Saving...' : 'Save'}
                               </button>
                               <button
                                 onClick={() => setEditType(null)}
-                                className="px-3 py-1.5 border border-gray-300 text-gray-600 hover:bg-gray-50 rounded text-xs"
+                                className="px-3 py-1.5 border border-app-input-border text-app-muted hover:bg-app-page rounded text-xs"
                               >
                                 Cancel
                               </button>
@@ -188,11 +188,11 @@ export function HRLeavePolicyContent() {
                           ) : (
                             <>
                               <button onClick={() => openEdit(p)} title="Edit"
-                                className="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded">
+                                className="p-1.5 text-app-subtle hover:text-app-accent hover:bg-blue-50 rounded">
                                 <Pencil size={15} />
                               </button>
                               <button onClick={() => handleDelete(p.leave_type)} title="Delete"
-                                className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded">
+                                className="p-1.5 text-app-subtle hover:text-red-600 hover:bg-red-50 rounded">
                                 <Trash2 size={15} />
                               </button>
                             </>
@@ -220,18 +220,18 @@ export function HRLeavePolicyContent() {
           <form onSubmit={handleAdd} className="space-y-4">
             {error && <div className="text-red-600 text-sm bg-red-50 rounded-lg px-3 py-2">{error}</div>}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Leave Type Name</label>
+              <label className="block text-sm font-medium text-app mb-1">Leave Type Name</label>
               <input
                 value={addForm.leave_type}
                 onChange={e => setAddForm({ ...addForm, leave_type: e.target.value })}
                 required
                 placeholder="e.g. compassionate, study, unpaid..."
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-app-input-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-app-accent"
               />
-              <p className="text-xs text-gray-400 mt-1">Will be stored as lowercase with underscores (e.g. "study_leave")</p>
+              <p className="text-xs text-app-subtle mt-1">Will be stored as lowercase with underscores (e.g. "study_leave")</p>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Default Days</label>
+              <label className="block text-sm font-medium text-app mb-1">Default Days</label>
               <input
                 type="number"
                 value={addForm.default_days}
@@ -239,15 +239,15 @@ export function HRLeavePolicyContent() {
                 min={0}
                 step={1}
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-app-input-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-app-accent"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Applies To</label>
+              <label className="block text-sm font-medium text-app mb-1">Applies To</label>
               <select
                 value={addForm.gender_applicable}
                 onChange={e => setAddForm({ ...addForm, gender_applicable: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none"
+                className="w-full px-3 py-2 border border-app-input-border rounded-lg text-sm focus:outline-none"
               >
                 <option value="all">All employees</option>
                 <option value="male">Male employees only</option>
@@ -256,7 +256,7 @@ export function HRLeavePolicyContent() {
             </div>
             <button
               type="submit"
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-lg text-sm font-medium"
+              className="w-full bg-app-accent hover:bg-app-accent-hover text-white py-2.5 rounded-lg text-sm font-medium"
             >
               Create Leave Type
             </button>

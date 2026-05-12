@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: clockin-system
+    name: attendance-tracker
     runtime: node
     plan: free
     buildCommand: >

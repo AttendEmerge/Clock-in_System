@@ -1,6 +1,6 @@
-# Clock-in System — Handoff Documentation
+# Attendance Tracker — Handoff Documentation
 
-**Purpose:** This document enables a new team to take over the Clock-in System, understand its structure, run it locally, and continue development with minimal friction. It is written for developers who will maintain, extend, or redeploy the application.
+**Purpose:** This document enables a new team to take over Attendance Tracker, understand its structure, run it locally, and continue development with minimal friction. It is written for developers who will maintain, extend, or redeploy the application.
 
 **Last updated:** March 2026
 
@@ -46,7 +46,7 @@
 
 ## 2. System Summary
 
-The **Clock-in System** is a full-stack web app for employee attendance:
+**Attendance Tracker** is a full-stack web app for employee attendance:
 
 - **Employees** clock in via **QR code** (with GPS) or **one-time token**; request overtime and leave; view their history.
 - **Supervisors** do the same plus approve overtime for their team.

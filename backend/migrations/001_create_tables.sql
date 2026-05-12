@@ -1,5 +1,5 @@
 -- ============================================================
--- Clock-in System Database Migration
+-- Attendance Tracker Database Migration
 -- Run this file against your MySQL database to set up schema
 -- ============================================================
 

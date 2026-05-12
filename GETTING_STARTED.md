@@ -1,4 +1,4 @@
-# Clock-in System — Full Setup Guide
+# Attendance Tracker — Full Setup Guide
 
 This guide assumes you are starting from zero. Follow the steps in order. Everything happens on your own computer (Windows).
 
@@ -241,7 +241,7 @@ Use a **second** terminal (the first one is still running the backend).
 
 6. Open your browser and go to:  
    **http://localhost:5173**  
-   You should see the Clock-in System **login page**.
+   You should see the Attendance Tracker **login page**.
 
 ---
 
@@ -339,7 +339,7 @@ You need **all three** running to use the app: MySQL, backend, frontend. Users o
 
 ## Part 13: Production Deployment
 
-When you're ready to deploy the Clock-in System for real use (not just local development), follow these steps.
+When you're ready to deploy Attendance Tracker for real use (not just local development), follow these steps.
 
 ### 1. Build the Frontend
 

@@ -1,6 +1,6 @@
-# Clock-in System — Organisation Presentation Guide
+# Attendance Tracker — Organisation Presentation Guide
 
-This document is a **content and structure guide** for presenting the Clock-in System to your organisation. Use it to build slides, talking points, and demos. It covers: what problems the system solves, how to use it, which scenarios it supports, how it improves organisational efficiency, and how it makes day-to-day work easier for staff.
+This document is a **content and structure guide** for presenting Attendance Tracker to your organisation. Use it to build slides, talking points, and demos. It covers: what problems the system solves, how to use it, which scenarios it supports, how it improves organisational efficiency, and how it makes day-to-day work easier for staff.
 
 ---
 
@@ -27,7 +27,7 @@ Suggested order for a 20–30 minute presentation (adjust for your time slot):
 |---|--------|---------|----------------|
 | 1 | **Opening: The challenge** | Set context — attendance, fairness, compliance | 2 min |
 | 2 | **Problems we face today** | List pain points (manual, inconsistent, no visibility) | 3 min |
-| 3 | **Introducing the Clock-in System** | One-sentence pitch + what it is | 2 min |
+| 3 | **Introducing Attendance Tracker** | One-sentence pitch + what it is | 2 min |
 | 4 | **How it works (high level)** | QR + token, roles, one place for everything | 3 min |
 | 5 | **Scenarios we support** | Remote, overtime, leave, holidays, multiple sites | 4 min |
 | 6 | **How to use it (by role)** | Quick walkthrough for Employees, Supervisors, HR | 5 min |
@@ -358,7 +358,7 @@ Short phrases you can use on slides or in closing.
 
 **Overall:**
 
-- *“The Clock-in System: fair, transparent, and efficient — for the organisation and for every employee.”*
+- *“Attendance Tracker: fair, transparent, and efficient — for the organisation and for every employee.”*
 
 ---
 
@@ -399,10 +399,10 @@ Use these to prepare for Q&A.
 
 You can turn this into a slide deck (e.g. 1–2 slides per bullet, depending on time).
 
-1. Title: Clock-in System — [Your organisation name]
+1. Title: Attendance Tracker — [Your organisation name]
 2. The challenge: attendance, leave, overtime — one place
 3. Problems today: manual, inconsistent, no visibility, admin burden
-4. Introducing the Clock-in System: one sentence
+4. Introducing Attendance Tracker: one sentence
 5. How it works: QR + token, three roles (Employee, Supervisor, HR)
 6. Scenarios: on-site, off-site, overtime, leave, holidays, multiple sites
 7. Employees: clock in (QR/token), dashboard, request leave/overtime/token

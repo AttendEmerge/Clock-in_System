@@ -48,7 +48,7 @@ export default function HRDashboard() {
     return (
       <Layout>
         <div className="flex items-center justify-center h-64">
-          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600" />
+          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-app-accent" />
         </div>
       </Layout>
     );
@@ -86,9 +86,9 @@ export default function HRDashboard() {
       label: 'Leave Requests',
       count: data?.pending_leave || 0,
       href: '/hr/leave',
-      color: 'text-blue-700',
+      color: 'text-app-nav-active-text',
       bgColor: 'bg-blue-50 border-blue-200',
-      icon: <CalendarDays size={18} className="text-blue-600" />,
+      icon: <CalendarDays size={18} className="text-app-accent" />,
     },
     {
       label: 'Flagged Events',
@@ -113,14 +113,14 @@ export default function HRDashboard() {
     <Layout>
       <div className="space-y-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">HR Dashboard</h1>
-          <p className="text-gray-500 text-sm mt-1">Company-wide attendance overview</p>
+          <h1 className="text-2xl font-bold text-app">HR Dashboard</h1>
+          <p className="text-app-muted text-sm mt-1">Company-wide attendance overview</p>
         </div>
 
         {/* Action Items — only shown when there are pending items */}
         {pendingItems.length > 0 && (
-          <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
-            <h2 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+          <div className="bg-app-surface rounded-xl border border-app-border-subtle shadow-sm p-5">
+            <h2 className="font-semibold text-app mb-3 flex items-center gap-2">
               <span className="relative flex h-2.5 w-2.5">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75" />
                 <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-amber-500" />
@@ -139,9 +139,9 @@ export default function HRDashboard() {
                     <p className={`text-sm font-semibold ${item.color}`}>
                       {item.count} pending
                     </p>
-                    <p className="text-xs text-gray-500 truncate">{item.label}</p>
+                    <p className="text-xs text-app-muted truncate">{item.label}</p>
                   </div>
-                  <ArrowRight size={16} className="text-gray-400 group-hover:translate-x-0.5 transition-transform" />
+                  <ArrowRight size={16} className="text-app-subtle group-hover:translate-x-0.5 transition-transform" />
                 </button>
               ))}
             </div>
@@ -160,10 +160,10 @@ export default function HRDashboard() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Weekly Attendance Chart */}
-          <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
-            <h2 className="font-semibold text-gray-900 mb-4">Weekly Attendance (Last 7 Days)</h2>
+          <div className="bg-app-surface rounded-xl border border-app-border-subtle shadow-sm p-5">
+            <h2 className="font-semibold text-app mb-4">Weekly Attendance (Last 7 Days)</h2>
             {weeklyData.length === 0 ? (
-              <p className="text-center text-gray-400 py-8 text-sm">No data yet</p>
+              <p className="text-center text-app-subtle py-8 text-sm">No data yet</p>
             ) : (
               <ResponsiveContainer width="100%" height={200}>
                 <BarChart data={weeklyData}>
@@ -178,10 +178,10 @@ export default function HRDashboard() {
           </div>
 
           {/* Department Breakdown */}
-          <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
-            <h2 className="font-semibold text-gray-900 mb-4">Department Attendance</h2>
+          <div className="bg-app-surface rounded-xl border border-app-border-subtle shadow-sm p-5">
+            <h2 className="font-semibold text-app mb-4">Department Attendance</h2>
             {deptData.length === 0 ? (
-              <p className="text-center text-gray-400 py-8 text-sm">No departments configured</p>
+              <p className="text-center text-app-subtle py-8 text-sm">No departments configured</p>
             ) : (
               <ResponsiveContainer width="100%" height={200}>
                 <BarChart data={deptData} layout="vertical">
@@ -198,23 +198,23 @@ export default function HRDashboard() {
         </div>
 
         {/* Quick Actions */}
-        <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
-          <h2 className="font-semibold text-gray-900 mb-3">Quick Actions</h2>
+        <div className="bg-app-surface rounded-xl border border-app-border-subtle shadow-sm p-5">
+          <h2 className="font-semibold text-app mb-3">Quick Actions</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
             {quickActions.map(action => (
               <button
                 key={action.label}
                 onClick={() => navigate(action.href)}
-                className="flex items-center gap-3 p-3 rounded-lg border border-gray-100 text-left hover:bg-gray-50 hover:border-gray-200 transition-all group"
+                className="flex items-center gap-3 p-3 rounded-lg border border-app-border-subtle text-left hover:bg-app-page hover:border-app-border transition-all group"
               >
-                <div className="w-9 h-9 rounded-lg bg-gray-100 group-hover:bg-blue-50 flex items-center justify-center text-gray-500 group-hover:text-blue-600 transition-colors flex-shrink-0">
+                <div className="w-9 h-9 rounded-lg bg-app-border-subtle group-hover:bg-app-nav-active-bg flex items-center justify-center text-app-muted group-hover:text-app-accent transition-colors flex-shrink-0">
                   {action.icon}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-gray-900">{action.label}</p>
-                  <p className="text-xs text-gray-400 truncate">{action.description}</p>
+                  <p className="text-sm font-medium text-app">{action.label}</p>
+                  <p className="text-xs text-app-subtle truncate">{action.description}</p>
                 </div>
-                <ChevronRight size={16} className="text-gray-300 group-hover:text-gray-500 transition-colors" />
+                <ChevronRight size={16} className="text-app-subtle group-hover:text-app-muted transition-colors" />
               </button>
             ))}
           </div>

@@ -198,8 +198,8 @@ export default function MobileClockInPage() {
   // ── GPS status chip ───────────────────────────────────────────────────────
   function GpsChip() {
     const map: Record<GpsStatus, { icon: React.ReactNode; text: string; cls: string }> = {
-      idle:        { icon: <MapPin size={14} />,    text: 'Location pending',     cls: 'bg-gray-100 text-gray-600' },
-      acquiring:   { icon: <Loader2 size={14} className="animate-spin" />, text: 'Getting location…', cls: 'bg-blue-50 text-blue-700' },
+      idle:        { icon: <MapPin size={14} />,    text: 'Location pending',     cls: 'bg-app-border-subtle text-app-muted' },
+      acquiring:   { icon: <Loader2 size={14} className="animate-spin" />, text: 'Getting location…', cls: 'bg-app-nav-active-bg text-app-accent' },
       acquired:    { icon: <CheckCircle2 size={14} />, text: `Location captured`, cls: 'bg-green-50 text-green-700' },
       denied:      { icon: <AlertCircle size={14} />,  text: 'Location denied — will be flagged', cls: 'bg-orange-50 text-orange-700' },
       unsupported: { icon: <AlertCircle size={14} />,  text: 'Location not available', cls: 'bg-orange-50 text-orange-700' },
@@ -220,21 +220,21 @@ export default function MobileClockInPage() {
 
   // ── Render ────────────────────────────────────────────────────────────────
   if (step === 'loading') {
-    return <Shell><Loader2 size={36} className="animate-spin text-blue-500" /></Shell>;
+    return <Shell><Loader2 size={36} className="animate-spin text-app-accent" /></Shell>;
   }
 
   if (step === 'error') {
     return (
       <Shell>
         <AlertCircle size={48} className="text-red-500 mb-4" />
-        <p className="text-red-700 font-semibold text-center">{errorMsg}</p>
+        <p className="text-red-700 dark:text-red-400 font-semibold text-center">{errorMsg}</p>
         <div className="mt-6 flex flex-col items-center gap-3">
           {showOvertimeLink && (
-            <a href="/employee/overtime" className="text-blue-600 font-semibold underline">
+            <a href="/employee/overtime" className="text-app-accent font-semibold underline">
               Request Overtime
             </a>
           )}
-          <button onClick={() => navigate('/login')} className="text-blue-600 underline text-sm">
+          <button onClick={() => navigate('/login')} className="text-app-accent underline text-sm">
             Go to login
           </button>
         </div>
@@ -246,8 +246,8 @@ export default function MobileClockInPage() {
     return (
       <Shell>
         <CheckCircle2 size={56} className="text-green-500 mb-4" />
-        <h2 className="text-xl font-bold text-gray-900 mb-1">You're clocked in!</h2>
-        <p className="text-gray-500 text-sm mb-4">{successMsg}</p>
+        <h2 className="text-xl font-bold text-app mb-1">You're clocked in!</h2>
+        <p className="text-app-muted text-sm mb-4">{successMsg}</p>
         {isFlagged && (
           <div className="bg-yellow-50 border border-yellow-200 rounded-xl px-4 py-3 text-sm text-yellow-800 text-center mb-3">
             <strong>Note:</strong> This clock-in was flagged ({flagReason?.replace('_', ' ')}) and will be reviewed by HR.
@@ -262,11 +262,11 @@ export default function MobileClockInPage() {
           </div>
         )}
         {gpsStatus === 'acquired' && gpsCoords && (
-          <p className="text-xs text-gray-400 mt-3">
+          <p className="text-xs text-app-subtle mt-3">
             Location recorded: {gpsCoords.latitude.toFixed(5)}, {gpsCoords.longitude.toFixed(5)}
           </p>
         )}
-        <p className="text-xs text-gray-400 mt-6">You can close this page.</p>
+        <p className="text-xs text-app-subtle mt-6">You can close this page.</p>
       </Shell>
     );
   }
@@ -274,27 +274,27 @@ export default function MobileClockInPage() {
   if (step === 'clocking') {
     return (
       <Shell>
-        <Loader2 size={36} className="animate-spin text-blue-500 mb-4" />
-        <p className="text-gray-600 font-medium">Clocking in…</p>
-        <p className="text-gray-400 text-xs mt-2">Please wait.</p>
+        <Loader2 size={36} className="animate-spin text-app-accent mb-4" />
+        <p className="text-app-muted font-medium">Clocking in…</p>
+        <p className="text-app-subtle text-xs mt-2">Please wait.</p>
       </Shell>
     );
   }
 
   if (step === 'login') {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-blue-600 to-blue-800 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gradient-to-b from-blue-600 to-blue-800 dark:from-zinc-950 dark:via-violet-950 dark:to-neutral-950 flex items-center justify-center p-4">
         <div className="w-full max-w-sm">
           <div className="text-center mb-6">
-            <div className="inline-flex items-center justify-center w-14 h-14 bg-white/20 rounded-2xl mb-3">
+            <div className="inline-flex items-center justify-center w-14 h-14 bg-white/15 dark:bg-white/10 rounded-2xl mb-3">
               <Clock size={28} className="text-white" />
             </div>
             <h1 className="text-2xl font-bold text-white">Clock In</h1>
-            <p className="text-blue-200 text-sm mt-1">Sign in to record your attendance</p>
+            <p className="text-white/80 dark:text-violet-200/90 text-sm mt-1">Sign in to record your attendance</p>
           </div>
-          <div className="bg-white rounded-2xl p-6 shadow-xl">
+          <div className="bg-app-surface rounded-2xl p-6 shadow-xl border border-app-border">
             {errorMsg && (
-              <div className="bg-red-50 border border-red-200 text-red-700 px-3 py-2 rounded-lg text-sm mb-4">{errorMsg}</div>
+              <div className="bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900 text-red-700 dark:text-red-300 px-3 py-2 rounded-lg text-sm mb-4">{errorMsg}</div>
             )}
             {!isSecureCtx() && (
               <div className="bg-orange-50 border border-orange-200 rounded-xl px-3 py-2 text-xs text-orange-800 mb-4 flex items-start gap-2">
@@ -304,19 +304,19 @@ export default function MobileClockInPage() {
             )}
             <form onSubmit={handleLogin} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                <label className="block text-sm font-medium text-app mb-1">Email</label>
                 <input type="email" value={email} onChange={e => setEmail(e.target.value)} required autoFocus
                   placeholder="you@company.com"
-                  className="w-full px-3 py-3 border border-gray-300 rounded-xl text-base focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                  className="w-full px-3 py-3 border border-app-input-border bg-app-input rounded-xl text-base focus:outline-none focus:ring-2 focus:ring-app-accent" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                <label className="block text-sm font-medium text-app mb-1">Password</label>
                 <input type="password" value={password} onChange={e => setPassword(e.target.value)} required
                   placeholder="••••••••"
-                  className="w-full px-3 py-3 border border-gray-300 rounded-xl text-base focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                  className="w-full px-3 py-3 border border-app-input-border bg-app-input rounded-xl text-base focus:outline-none focus:ring-2 focus:ring-app-accent" />
               </div>
               <button type="submit"
-                className="w-full bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-semibold py-3 rounded-xl text-base transition-colors">
+                className="w-full bg-app-accent hover:bg-app-accent-hover active:bg-app-accent-hover text-white font-semibold py-3 rounded-xl text-base transition-colors">
                 Sign In & Continue
               </button>
             </form>
@@ -328,17 +328,17 @@ export default function MobileClockInPage() {
 
   // step === 'ready'
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-600 to-blue-800 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-b from-blue-600 to-blue-800 dark:from-zinc-950 dark:via-violet-950 dark:to-neutral-950 flex items-center justify-center p-4">
       <div className="w-full max-w-sm">
         <div className="text-center mb-6">
-          <div className="inline-flex items-center justify-center w-14 h-14 bg-white/20 rounded-2xl mb-3">
+          <div className="inline-flex items-center justify-center w-14 h-14 bg-white/15 dark:bg-white/10 rounded-2xl mb-3">
             <Clock size={28} className="text-white" />
           </div>
           <h1 className="text-2xl font-bold text-white">Clock In</h1>
-          <p className="text-blue-200 text-sm mt-1">Welcome, {userName}</p>
+          <p className="text-white/80 dark:text-violet-200/90 text-sm mt-1">Welcome, {userName}</p>
         </div>
 
-        <div className="bg-white rounded-2xl p-6 shadow-xl space-y-4">
+        <div className="bg-app-surface rounded-2xl p-6 shadow-xl border border-app-border space-y-4">
           {/* GPS status — visible BEFORE the user taps the button */}
           <GpsChip />
 
@@ -361,7 +361,7 @@ export default function MobileClockInPage() {
           )}
 
           {errorMsg && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-3 py-2 rounded-lg text-sm">{errorMsg}</div>
+            <div className="bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900 text-red-700 dark:text-red-300 px-3 py-2 rounded-lg text-sm">{errorMsg}</div>
           )}
 
           <button onClick={handleClockIn}
@@ -370,11 +370,11 @@ export default function MobileClockInPage() {
             Clock In Now
           </button>
 
-          <p className="text-center text-xs text-gray-400">
+          <p className="text-center text-xs text-app-subtle">
             Not {userName}?{' '}
             <button
               onClick={() => { localStorage.removeItem('mobile_token'); localStorage.removeItem('mobile_user'); setStep('login'); }}
-              className="text-blue-500 underline"
+              className="text-app-accent underline"
             >
               Switch account
             </button>
@@ -387,7 +387,7 @@ export default function MobileClockInPage() {
 
 function Shell({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-6">
+    <div className="min-h-screen bg-app-page flex flex-col items-center justify-center p-6">
       {children}
     </div>
   );

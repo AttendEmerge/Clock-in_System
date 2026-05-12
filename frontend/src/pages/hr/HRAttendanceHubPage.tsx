@@ -7,7 +7,7 @@ import { HRLocationsContent } from './HRLocationsPage';
 import { HRTokensContent } from './HRTokensPage';
 
 const TABS = [
-  { key: 'history', label: 'Clock History' },
+  { key: 'history', label: 'Attendance history' },
   { key: 'flags', label: 'Flagged Events' },
   { key: 'locations', label: 'Locations' },
   { key: 'tokens', label: 'Tokens' },
@@ -35,8 +35,8 @@ export default function HRAttendanceHubPage() {
     <Layout>
       <div className="space-y-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Attendance</h1>
-          <p className="text-sm text-gray-500 mt-0.5">
+          <h1 className="text-2xl font-bold text-app">Attendance</h1>
+          <p className="text-sm text-app-muted mt-0.5">
             Review attendance activity, investigate exceptions, manage approved locations, and handle token workflows.
           </p>
         </div>

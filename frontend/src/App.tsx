@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import ProfilePage from './pages/account/ProfilePage';
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import ErrorBoundary from './components/ErrorBoundary';
@@ -26,7 +27,6 @@ import HRLeaveReportPage from './pages/hr/HRLeaveReportPage';
 import HRWorkforceHubPage from './pages/hr/HRWorkforceHubPage';
 import HRAttendanceHubPage from './pages/hr/HRAttendanceHubPage';
 import HRLeaveHubPage from './pages/hr/HRLeaveHubPage';
-import ChangePasswordPage from './pages/account/ChangePasswordPage';
 
 function App() {
   return (
@@ -64,11 +64,12 @@ function App() {
           } />
 
           {/* Account / profile */}
-          <Route path="/account/change-password" element={
+          <Route path="/account/profile" element={
             <ProtectedRoute allowedRoles={['employee', 'supervisor', 'hr']}>
-              <ChangePasswordPage />
+              <ProfilePage />
             </ProtectedRoute>
           } />
+          <Route path="/account/change-password" element={<Navigate to="/account/profile" replace />} />
 
           {/* Supervisor routes */}
           <Route path="/supervisor/dashboard" element={
@@ -133,11 +134,11 @@ function App() {
 
           {/* Unauthorized */}
           <Route path="/unauthorized" element={
-            <div className="min-h-screen flex items-center justify-center">
+            <div className="min-h-screen flex items-center justify-center bg-app-page">
               <div className="text-center">
-                <h1 className="text-2xl font-bold text-gray-900">Access Denied</h1>
-                <p className="text-gray-500 mt-2">You don't have permission to view this page.</p>
-                <a href="/login" className="text-blue-600 hover:underline mt-4 block">Back to Login</a>
+                <h1 className="text-2xl font-bold text-app">Access Denied</h1>
+                <p className="text-app-muted mt-2">You don't have permission to view this page.</p>
+                <a href="/login" className="text-app-accent hover:underline mt-4 block">Back to Login</a>
               </div>
             </div>
           } />

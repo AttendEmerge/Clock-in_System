@@ -52,10 +52,10 @@ export default function EmployeeOvertimePage() {
     <Layout>
       <div className="space-y-6">
         <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-gray-900">Overtime Requests</h1>
+          <h1 className="text-2xl font-bold text-app">Overtime Requests</h1>
           <button
             onClick={() => setShowModal(true)}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium"
+            className="bg-app-accent hover:bg-app-accent-hover text-white px-4 py-2 rounded-lg text-sm font-medium"
           >
             New Request
           </button>
@@ -67,27 +67,27 @@ export default function EmployeeOvertimePage() {
           </div>
         )}
 
-        <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+        <div className="bg-app-surface rounded-xl border border-app-border-subtle shadow-sm overflow-hidden">
           {loading ? (
             <div className="flex items-center justify-center py-12">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" />
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-app-accent" />
             </div>
           ) : requests.length === 0 ? (
-            <p className="text-center text-gray-400 py-12">No overtime requests yet</p>
+            <p className="text-center text-app-subtle py-12">No overtime requests yet</p>
           ) : (
-            <div className="divide-y divide-gray-50">
+            <div className="divide-y divide-app-border-subtle">
               {requests.map(req => (
                 <div key={req.id} className="px-4 py-4 flex items-start justify-between">
                   <div>
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="font-medium text-gray-900">{req.requested_date}</span>
+                      <span className="font-medium text-app">{req.requested_date}</span>
                       <Badge variant={statusVariant(req.status)}>{req.status.replace(/_/g, ' ')}</Badge>
                       <Badge variant={req.overtime_type === 'double' ? 'warning' : 'neutral'}>
                         {req.overtime_type === 'double' ? 'Double OT' : 'Regular OT'}
                       </Badge>
                     </div>
-                    <p className="text-sm text-gray-500">{req.reason}</p>
-                    <p className="text-xs text-gray-400 mt-1">
+                    <p className="text-sm text-app-muted">{req.reason}</p>
+                    <p className="text-xs text-app-subtle mt-1">
                       Supervisor: {req.supervisor_name || 'Not assigned'} · Submitted {format(new Date(req.created_at), 'd MMM yyyy')}
                     </p>
                     {req.rejection_reason && (
@@ -106,19 +106,19 @@ export default function EmployeeOvertimePage() {
           <form onSubmit={handleSubmit} className="space-y-4">
             {error && <div className="text-red-600 text-sm bg-red-50 rounded-lg px-3 py-2">{error}</div>}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Date</label>
+              <label className="block text-sm font-medium text-app mb-1">Date</label>
               <input type="date" value={date} onChange={e => setDate(e.target.value)} required
                 min={new Date().toISOString().slice(0, 10)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                className="w-full px-3 py-2 border border-app-input-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-app-accent" />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Reason</label>
+              <label className="block text-sm font-medium text-app mb-1">Reason</label>
               <textarea value={reason} onChange={e => setReason(e.target.value)} required rows={3}
                 placeholder="Describe the overtime work required..."
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm resize-none focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                className="w-full px-3 py-2 border border-app-input-border rounded-lg text-sm resize-none focus:outline-none focus:ring-2 focus:ring-app-accent" />
             </div>
             <button type="submit"
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-lg text-sm font-medium">
+              className="w-full bg-app-accent hover:bg-app-accent-hover text-white py-2.5 rounded-lg text-sm font-medium">
               Submit Request
             </button>
           </form>

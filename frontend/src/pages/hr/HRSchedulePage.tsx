@@ -44,8 +44,8 @@ export function HRScheduleContent() {
   return (
     <div className="max-w-xl space-y-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Work Schedule</h1>
-          <p className="text-gray-500 text-sm mt-1">Configure expected hours and grace periods (Mon–Fri)</p>
+          <h1 className="text-2xl font-bold text-app">Work Schedule</h1>
+          <p className="text-app-muted text-sm mt-1">Configure expected hours and grace periods (Mon–Fri)</p>
         </div>
 
         {msg && (
@@ -57,43 +57,43 @@ export function HRScheduleContent() {
 
         {loading ? (
           <div className="flex items-center justify-center py-12">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" />
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-app-accent" />
           </div>
         ) : (
-          <form onSubmit={handleSave} className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 space-y-5">
+          <form onSubmit={handleSave} className="bg-app-surface rounded-xl border border-app-border-subtle shadow-sm p-6 space-y-5">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-app mb-1">
                   <span className="flex items-center gap-1"><Clock size={14} /> Expected Start Time</span>
                 </label>
                 <input type="time" value={form.expected_start} onChange={e => setForm({ ...form, expected_start: e.target.value })} required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                  className="w-full px-3 py-2 border border-app-input-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-app-accent" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-app mb-1">
                   <span className="flex items-center gap-1"><Clock size={14} /> Expected End Time</span>
                 </label>
                 <input type="time" value={form.expected_end} onChange={e => setForm({ ...form, expected_end: e.target.value })} required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                  className="w-full px-3 py-2 border border-app-input-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-app-accent" />
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Late Arrival Grace Period (minutes)</label>
+              <label className="block text-sm font-medium text-app mb-1">Late Arrival Grace Period (minutes)</label>
               <input type="number" value={form.late_grace_minutes} onChange={e => setForm({ ...form, late_grace_minutes: parseInt(e.target.value) })}
                 min={0} max={120} required
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
-              <p className="text-xs text-gray-400 mt-1">
+                className="w-full px-3 py-2 border border-app-input-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-app-accent" />
+              <p className="text-xs text-app-subtle mt-1">
                 Employees clocking in after {form.expected_start} + {form.late_grace_minutes} min will be flagged as late
               </p>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Auto Checkout Buffer (minutes after end time)</label>
+              <label className="block text-sm font-medium text-app mb-1">Auto Checkout Buffer (minutes after end time)</label>
               <input type="number" value={form.overtime_buffer_minutes} onChange={e => setForm({ ...form, overtime_buffer_minutes: parseInt(e.target.value) })}
                 min={0} max={60} required
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
-              <p className="text-xs text-gray-400 mt-1">
+                className="w-full px-3 py-2 border border-app-input-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-app-accent" />
+              <p className="text-xs text-app-subtle mt-1">
                 Employees without overtime token are auto-checked out {form.overtime_buffer_minutes} minutes after end time
               </p>
             </div>
@@ -106,7 +106,7 @@ export function HRScheduleContent() {
             </div>
 
             <button type="submit" disabled={saving}
-              className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white py-2.5 rounded-lg text-sm font-medium">
+              className="w-full bg-app-accent hover:bg-app-accent-hover disabled:bg-blue-400 text-white py-2.5 rounded-lg text-sm font-medium">
               {saving ? 'Saving...' : 'Save Schedule'}
             </button>
           </form>

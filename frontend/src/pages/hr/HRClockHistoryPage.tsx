@@ -46,76 +46,76 @@ export function HRClockHistoryContent() {
 
   return (
     <div className="space-y-6">
-        <h1 className="text-2xl font-bold text-gray-900">Clock History</h1>
+        <h1 className="text-2xl font-bold text-app">Attendance history</h1>
 
-        <div className="flex flex-wrap gap-3 bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
+        <div className="flex flex-wrap gap-3 bg-app-surface p-4 rounded-xl border border-app-border-subtle shadow-sm">
           <select value={userId} onChange={e => setUserId(e.target.value)}
-            className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none min-w-48">
+            className="border border-app-input-border rounded-lg px-3 py-2 text-sm focus:outline-none min-w-48">
             <option value="">All Employees</option>
             {users.map(u => <option key={u.id} value={u.id}>{u.name}</option>)}
           </select>
           <div>
-            <label className="block text-xs text-gray-500 mb-1">From</label>
+            <label className="block text-xs text-app-muted mb-1">From</label>
             <input type="date" value={from} onChange={e => setFrom(e.target.value)}
-              className="border border-gray-300 rounded-lg px-3 py-1.5 text-sm" />
+              className="border border-app-input-border rounded-lg px-3 py-1.5 text-sm" />
           </div>
           <div>
-            <label className="block text-xs text-gray-500 mb-1">To</label>
+            <label className="block text-xs text-app-muted mb-1">To</label>
             <input type="date" value={to} onChange={e => setTo(e.target.value)}
-              className="border border-gray-300 rounded-lg px-3 py-1.5 text-sm" />
+              className="border border-app-input-border rounded-lg px-3 py-1.5 text-sm" />
           </div>
           <div className="flex items-end">
             <button onClick={() => { setPage(1); fetchHistory(); }}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium">
+              className="bg-app-accent hover:bg-app-accent-hover text-white px-4 py-2 rounded-lg text-sm font-medium">
               Filter
             </button>
           </div>
         </div>
 
-        <div className="text-sm text-gray-500">{total} total records</div>
+        <div className="text-sm text-app-muted">{total} total records</div>
 
-        <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+        <div className="bg-app-surface rounded-xl border border-app-border-subtle shadow-sm overflow-hidden">
           {loading ? (
-            <div className="flex items-center justify-center py-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" /></div>
+            <div className="flex items-center justify-center py-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-app-accent" /></div>
           ) : events.length === 0 ? (
-            <p className="text-center text-gray-400 py-12">No events found</p>
+            <p className="text-center text-app-subtle py-12">No events found</p>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
-                <thead className="bg-gray-50 border-b border-gray-100">
+                <thead className="bg-app-page border-b border-app-border-subtle">
                   <tr>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Employee</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Dept</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Date & Time</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Type</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Method</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Location</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Flag</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-app-muted uppercase">Employee</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-app-muted uppercase">Dept</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-app-muted uppercase">Date & Time</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-app-muted uppercase">Type</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-app-muted uppercase">Method</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-app-muted uppercase">Location</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-app-muted uppercase">Flag</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-50">
+                <tbody className="divide-y divide-app-border-subtle">
                   {events.map(ev => (
-                    <tr key={ev.id} className={`hover:bg-gray-50 ${ev.is_flagged && !ev.is_unflagged ? 'bg-yellow-50/40' : ''}`}>
+                    <tr key={ev.id} className={`hover:bg-app-page ${ev.is_flagged && !ev.is_unflagged ? 'bg-yellow-50/40' : ''}`}>
                       <td className="px-4 py-3">
-                        <p className="font-medium text-gray-900">{ev.user_name}</p>
-                        <p className="text-xs text-gray-400">{ev.email}</p>
+                        <p className="font-medium text-app">{ev.user_name}</p>
+                        <p className="text-xs text-app-subtle">{ev.email}</p>
                       </td>
-                      <td className="px-4 py-3 text-gray-500 text-xs">{ev.department_name || '—'}</td>
-                      <td className="px-4 py-3 text-gray-700">{format(new Date(ev.event_timestamp), 'd MMM yyyy HH:mm')}</td>
+                      <td className="px-4 py-3 text-app-muted text-xs">{ev.department_name || '—'}</td>
+                      <td className="px-4 py-3 text-app">{format(new Date(ev.event_timestamp), 'd MMM yyyy HH:mm')}</td>
                       <td className="px-4 py-3">
                         <Badge variant={ev.event_type === 'clock_in' ? 'success' : 'neutral'}>
                           {ev.event_type === 'clock_in' ? '→ In' : '← Out'}
                           {ev.is_overtime ? ' (OT)' : ''}
                         </Badge>
                       </td>
-                      <td className="px-4 py-3 text-gray-500 capitalize text-xs">{ev.method.replace('_', ' ')}</td>
+                      <td className="px-4 py-3 text-app-muted capitalize text-xs">{ev.method.replace('_', ' ')}</td>
                       <td className="px-4 py-3">
                         {ev.latitude != null
                           ? <a href={`https://maps.google.com/?q=${ev.latitude},${ev.longitude}`} target="_blank" rel="noopener"
-                              className="flex items-center gap-1 text-blue-600 hover:underline text-xs">
+                              className="flex items-center gap-1 text-app-accent hover:underline text-xs">
                               <MapPin size={11} /> View
                             </a>
-                          : <span className="text-gray-400 text-xs">—</span>}
+                          : <span className="text-app-subtle text-xs">—</span>}
                       </td>
                       <td className="px-4 py-3">
                         {ev.is_flagged && !ev.is_unflagged
@@ -135,10 +135,10 @@ export function HRClockHistoryContent() {
         {totalPages > 1 && (
           <div className="flex justify-center gap-2">
             <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}
-              className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm disabled:opacity-40">Previous</button>
-            <span className="px-3 py-1.5 text-sm text-gray-600">{page} / {totalPages}</span>
+              className="px-3 py-1.5 border border-app-input-border rounded-lg text-sm disabled:opacity-40">Previous</button>
+            <span className="px-3 py-1.5 text-sm text-app-muted">{page} / {totalPages}</span>
             <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages}
-              className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm disabled:opacity-40">Next</button>
+              className="px-3 py-1.5 border border-app-input-border rounded-lg text-sm disabled:opacity-40">Next</button>
           </div>
         )}
       </div>

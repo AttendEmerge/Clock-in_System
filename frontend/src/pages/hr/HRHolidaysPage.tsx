@@ -90,8 +90,8 @@ export function HRHolidaysContent() {
       <div className="space-y-6 max-w-3xl">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Holiday Calendar</h1>
-            <p className="text-sm text-gray-500 mt-0.5">
+            <h1 className="text-2xl font-bold text-app">Holiday Calendar</h1>
+            <p className="text-sm text-app-muted mt-0.5">
               Set company holidays. Employees will not be flagged as absent on these dates and regular clock-in will be disabled.
             </p>
           </div>
@@ -99,7 +99,7 @@ export function HRHolidaysContent() {
             <select
               value={yearFilter}
               onChange={e => setYearFilter(Number(e.target.value))}
-              className="px-3 py-2 border border-gray-300 rounded-lg text-sm"
+              className="px-3 py-2 border border-app-input-border rounded-lg text-sm"
             >
               {[yearFilter - 1, yearFilter, yearFilter + 1].map(y => (
                 <option key={y} value={y}>{y}</option>
@@ -107,7 +107,7 @@ export function HRHolidaysContent() {
             </select>
             <button
               onClick={openAdd}
-              className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium"
+              className="flex items-center gap-2 bg-app-accent hover:bg-app-accent-hover text-white px-4 py-2 rounded-lg text-sm font-medium"
             >
               <Plus size={16} /> Add Holiday
             </button>
@@ -119,41 +119,41 @@ export function HRHolidaysContent() {
 
         {loading ? (
           <div className="flex justify-center py-12">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" />
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-app-accent" />
           </div>
         ) : holidays.length === 0 ? (
-          <div className="bg-white rounded-xl border border-gray-100 p-12 text-center">
-            <CalendarHeart size={40} className="mx-auto text-gray-300 mb-3" />
-            <p className="text-gray-400 text-sm">No holidays set for {yearFilter}.</p>
+          <div className="bg-app-surface rounded-xl border border-app-border-subtle p-12 text-center">
+            <CalendarHeart size={40} className="mx-auto text-app-subtle mb-3" />
+            <p className="text-app-subtle text-sm">No holidays set for {yearFilter}.</p>
           </div>
         ) : (
-          <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+          <div className="bg-app-surface rounded-xl border border-app-border-subtle shadow-sm overflow-hidden">
             <table className="w-full text-sm">
-              <thead className="bg-gray-50 border-b border-gray-100">
+              <thead className="bg-app-page border-b border-app-border-subtle">
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Date</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Holiday</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Description</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Actions</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-app-muted uppercase">Date</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-app-muted uppercase">Holiday</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-app-muted uppercase">Description</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-app-muted uppercase">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-50">
+              <tbody className="divide-y divide-app-border-subtle">
                 {holidays.map(h => {
                   const dateStr = typeof h.date === 'string' ? h.date.slice(0, 10) : h.date;
                   const isPast = dateStr < today;
                   return (
-                    <tr key={h.id} className={`hover:bg-gray-50 ${isPast ? 'opacity-60' : ''}`}>
-                      <td className="px-4 py-3 text-gray-700 whitespace-nowrap">{formatDate(h.date)}</td>
-                      <td className="px-4 py-3 font-medium text-gray-900">{h.name}</td>
-                      <td className="px-4 py-3 text-gray-500">{h.description || '—'}</td>
+                    <tr key={h.id} className={`hover:bg-app-page ${isPast ? 'opacity-60' : ''}`}>
+                      <td className="px-4 py-3 text-app whitespace-nowrap">{formatDate(h.date)}</td>
+                      <td className="px-4 py-3 font-medium text-app">{h.name}</td>
+                      <td className="px-4 py-3 text-app-muted">{h.description || '—'}</td>
                       <td className="px-4 py-3">
                         <div className="flex gap-1">
                           <button onClick={() => openEdit(h)} title="Edit"
-                            className="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded">
+                            className="p-1.5 text-app-subtle hover:text-app-accent hover:bg-blue-50 rounded">
                             <Pencil size={15} />
                           </button>
                           <button onClick={() => handleDelete(h)} title="Delete"
-                            className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded">
+                            className="p-1.5 text-app-subtle hover:text-red-600 hover:bg-red-50 rounded">
                             <Trash2 size={15} />
                           </button>
                         </div>
@@ -172,37 +172,37 @@ export function HRHolidaysContent() {
           <form onSubmit={handleSubmit} className="space-y-4">
             {error && <div className="text-red-600 text-sm bg-red-50 rounded-lg px-3 py-2">{error}</div>}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Date</label>
+              <label className="block text-sm font-medium text-app mb-1">Date</label>
               <input
                 type="date"
                 value={form.date}
                 onChange={e => setForm({ ...form, date: e.target.value })}
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-app-input-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-app-accent"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
+              <label className="block text-sm font-medium text-app mb-1">Name</label>
               <input
                 value={form.name}
                 onChange={e => setForm({ ...form, name: e.target.value })}
                 required
                 placeholder="e.g. Christmas Day, Workers' Day..."
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-app-input-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-app-accent"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Description <span className="text-gray-400">(optional)</span></label>
+              <label className="block text-sm font-medium text-app mb-1">Description <span className="text-app-subtle">(optional)</span></label>
               <textarea
                 value={form.description}
                 onChange={e => setForm({ ...form, description: e.target.value })}
                 rows={2}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-app-input-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-app-accent"
               />
             </div>
             <button
               type="submit"
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-lg text-sm font-medium"
+              className="w-full bg-app-accent hover:bg-app-accent-hover text-white py-2.5 rounded-lg text-sm font-medium"
             >
               {editId ? 'Save Changes' : 'Create Holiday'}
             </button>

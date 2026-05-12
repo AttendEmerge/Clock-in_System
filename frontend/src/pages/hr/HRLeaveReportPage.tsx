@@ -65,16 +65,16 @@ export default function HRSystemReportPage() {
     <Layout>
       <div className="space-y-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">System Reports</h1>
-          <p className="text-sm text-gray-500 mt-0.5">Filter, preview and export company data</p>
+          <h1 className="text-2xl font-bold text-app">System Reports</h1>
+          <p className="text-sm text-app-muted mt-0.5">Filter, preview and export company data</p>
         </div>
 
         {/* Tab bar */}
-        <div className="flex gap-1 bg-gray-100 rounded-xl p-1 w-fit">
+        <div className="flex gap-1 bg-app-border-subtle rounded-xl p-1 w-fit">
           {(['attendance', 'leave', 'overtime'] as Tab[]).map(t => (
             <button key={t} onClick={() => changeTab(t)}
               className={`px-5 py-2 rounded-lg text-sm font-medium transition-colors capitalize ${
-                tab === t ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700'
+                tab === t ? 'bg-app-surface shadow-sm text-app' : 'text-app-muted hover:text-app'
               }`}>
               {t}
             </button>
@@ -170,34 +170,34 @@ function LeaveReport({ departments }: { departments: Department[] }) {
 
   return (
     <div className="space-y-4">
-      <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-4">
+      <div className="bg-app-surface rounded-xl border border-app-border-subtle shadow-sm p-4">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           <div>
-            <label className="block text-xs font-medium text-gray-600 mb-1">Year</label>
+            <label className="block text-xs font-medium text-app-muted mb-1">Year</label>
             <input type="number" value={filters.year} onChange={e => setFilters({ ...filters, year: e.target.value })}
               min={2020} max={2099}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              className="w-full px-3 py-2 border border-app-input-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-app-accent" />
           </div>
           <div>
-            <label className="block text-xs font-medium text-gray-600 mb-1">Department</label>
+            <label className="block text-xs font-medium text-app-muted mb-1">Department</label>
             <select value={filters.department_id} onChange={e => setFilters({ ...filters, department_id: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none">
+              className="w-full px-3 py-2 border border-app-input-border rounded-lg text-sm focus:outline-none">
               <option value="">All</option>
               {departments.map(d => <option key={d.id} value={d.id}>{d.name}</option>)}
             </select>
           </div>
           <div>
-            <label className="block text-xs font-medium text-gray-600 mb-1">Leave Type</label>
+            <label className="block text-xs font-medium text-app-muted mb-1">Leave Type</label>
             <select value={filters.leave_type} onChange={e => setFilters({ ...filters, leave_type: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none">
+              className="w-full px-3 py-2 border border-app-input-border rounded-lg text-sm focus:outline-none">
               <option value="">All</option>
               {Object.entries(LEAVE_LABELS).map(([v,l]) => <option key={v} value={v}>{l}</option>)}
             </select>
           </div>
           <div>
-            <label className="block text-xs font-medium text-gray-600 mb-1">Status</label>
+            <label className="block text-xs font-medium text-app-muted mb-1">Status</label>
             <select value={filters.status} onChange={e => setFilters({ ...filters, status: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none">
+              className="w-full px-3 py-2 border border-app-input-border rounded-lg text-sm focus:outline-none">
               <option value="">All</option>
               {ALL_STATUSES.map(s => <option key={s} value={s}>{s.replace('_',' ')}</option>)}
             </select>
@@ -205,14 +205,14 @@ function LeaveReport({ departments }: { departments: Department[] }) {
         </div>
         <div className="flex gap-3 mt-4">
           <button onClick={search}
-            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium">
+            className="flex items-center gap-2 bg-app-accent hover:bg-app-accent-hover text-white px-4 py-2 rounded-lg text-sm font-medium">
             <Search size={15} /> Preview
           </button>
           <button onClick={download} disabled={rows.length === 0}
             className="flex items-center gap-2 bg-green-600 hover:bg-green-700 disabled:bg-green-300 text-white px-4 py-2 rounded-lg text-sm font-medium">
             <Download size={15} /> Download CSV
           </button>
-          <span className="flex items-center text-sm text-gray-500 ml-auto">{rows.length} record{rows.length !== 1 ? 's' : ''}</span>
+          <span className="flex items-center text-sm text-app-muted ml-auto">{rows.length} record{rows.length !== 1 ? 's' : ''}</span>
         </div>
       </div>
       <PreviewTable
@@ -290,28 +290,28 @@ function FilterBar({ filters, onChange, departments, showMonth, onSearch, onDown
   loading: boolean;
 }) {
   return (
-    <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-4">
+    <div className="bg-app-surface rounded-xl border border-app-border-subtle shadow-sm p-4">
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <div>
-          <label className="block text-xs font-medium text-gray-600 mb-1">Year</label>
+          <label className="block text-xs font-medium text-app-muted mb-1">Year</label>
           <input type="number" value={filters.year || ''} onChange={e => onChange({ year: e.target.value })}
             min={2020} max={2099}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            className="w-full px-3 py-2 border border-app-input-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-app-accent" />
         </div>
         {showMonth && (
           <div>
-            <label className="block text-xs font-medium text-gray-600 mb-1">Month</label>
+            <label className="block text-xs font-medium text-app-muted mb-1">Month</label>
             <select value={filters.month || ''} onChange={e => onChange({ month: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none">
+              className="w-full px-3 py-2 border border-app-input-border rounded-lg text-sm focus:outline-none">
               <option value="">All Months</option>
               {MONTHS.slice(1).map((m, i) => <option key={i+1} value={i+1}>{m}</option>)}
             </select>
           </div>
         )}
         <div>
-          <label className="block text-xs font-medium text-gray-600 mb-1">Department</label>
+          <label className="block text-xs font-medium text-app-muted mb-1">Department</label>
           <select value={filters.department_id || ''} onChange={e => onChange({ department_id: e.target.value })}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none">
+            className="w-full px-3 py-2 border border-app-input-border rounded-lg text-sm focus:outline-none">
             <option value="">All Departments</option>
             {departments.map(d => <option key={d.id} value={d.id}>{d.name}</option>)}
           </select>
@@ -319,14 +319,14 @@ function FilterBar({ filters, onChange, departments, showMonth, onSearch, onDown
       </div>
       <div className="flex gap-3 mt-4">
         <button onClick={onSearch} disabled={loading}
-          className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white px-4 py-2 rounded-lg text-sm font-medium">
+          className="flex items-center gap-2 bg-app-accent hover:bg-app-accent-hover disabled:bg-blue-400 text-white px-4 py-2 rounded-lg text-sm font-medium">
           <Search size={15} /> {loading ? 'Loading…' : 'Preview'}
         </button>
         <button onClick={onDownload} disabled={count === 0}
           className="flex items-center gap-2 bg-green-600 hover:bg-green-700 disabled:bg-green-300 text-white px-4 py-2 rounded-lg text-sm font-medium">
           <Download size={15} /> Download CSV
         </button>
-        <span className="flex items-center text-sm text-gray-500 ml-auto">{count} record{count !== 1 ? 's' : ''}</span>
+        <span className="flex items-center text-sm text-app-muted ml-auto">{count} record{count !== 1 ? 's' : ''}</span>
       </div>
     </div>
   );
@@ -338,28 +338,28 @@ function PreviewTable({ headers, rows, loading }: {
   loading: boolean;
 }) {
   return (
-    <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+    <div className="bg-app-surface rounded-xl border border-app-border-subtle shadow-sm overflow-hidden">
       {loading ? (
         <div className="flex justify-center py-12">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" />
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-app-accent" />
         </div>
       ) : rows.length === 0 ? (
-        <p className="text-center text-gray-400 py-10 text-sm">Click Preview to load data.</p>
+        <p className="text-center text-app-subtle py-10 text-sm">Click Preview to load data.</p>
       ) : (
         <div className="overflow-x-auto">
           <table className="w-full text-xs">
-            <thead className="bg-gray-50 border-b border-gray-100">
+            <thead className="bg-app-page border-b border-app-border-subtle">
               <tr>
                 {headers.map(h => (
-                  <th key={h} className="px-3 py-2.5 text-left font-semibold text-gray-500 uppercase whitespace-nowrap">{h}</th>
+                  <th key={h} className="px-3 py-2.5 text-left font-semibold text-app-muted uppercase whitespace-nowrap">{h}</th>
                 ))}
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-50">
+            <tbody className="divide-y divide-app-border-subtle">
               {rows.map((row, i) => (
-                <tr key={i} className="hover:bg-gray-50">
+                <tr key={i} className="hover:bg-app-page">
                   {row.map((cell, j) => (
-                    <td key={j} className="px-3 py-2 text-gray-700 whitespace-nowrap">{cell ?? '—'}</td>
+                    <td key={j} className="px-3 py-2 text-app whitespace-nowrap">{cell ?? '—'}</td>
                   ))}
                 </tr>
               ))}

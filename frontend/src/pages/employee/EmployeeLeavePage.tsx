@@ -141,12 +141,12 @@ export default function EmployeeLeavePage() {
 
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">My Leave</h1>
-            <p className="text-sm text-gray-500 mt-0.5">View your leave balances and manage requests</p>
+            <h1 className="text-2xl font-bold text-app">My Leave</h1>
+            <p className="text-sm text-app-muted mt-0.5">View your leave balances and manage requests</p>
           </div>
           <button
             onClick={() => { setShowForm(true); setFormError(''); }}
-            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium"
+            className="flex items-center gap-2 bg-app-accent hover:bg-app-accent-hover text-white px-4 py-2 rounded-lg text-sm font-medium"
           >
             <Plus size={16} /> Request Leave
           </button>
@@ -158,24 +158,24 @@ export default function EmployeeLeavePage() {
         {/* Leave balances */}
         {balances.length > 0 && (
           <div>
-            <h2 className="text-base font-semibold text-gray-700 mb-3">Leave Balances ({new Date().getFullYear()})</h2>
+            <h2 className="text-base font-semibold text-app mb-3">Leave Balances ({new Date().getFullYear()})</h2>
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
               {balances.map(lb => {
                 const pct = lb.days_allocated > 0 ? Math.round((lb.days_used / lb.days_allocated) * 100) : 0;
                 return (
-                  <div key={lb.id} className="bg-white rounded-xl border border-gray-100 p-4 shadow-sm">
-                    <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
+                  <div key={lb.id} className="bg-app-surface rounded-xl border border-app-border-subtle p-4 shadow-sm">
+                    <p className="text-xs font-semibold text-app-muted uppercase tracking-wide mb-2">
                       {formatLeaveLabel(lb.leave_type)}
                     </p>
-                    <p className="text-2xl font-bold text-gray-900">{lb.days_remaining}</p>
-                    <p className="text-xs text-gray-400 mb-2">of {lb.days_allocated} days remaining</p>
-                    <div className="w-full bg-gray-100 rounded-full h-1.5">
+                    <p className="text-2xl font-bold text-app">{lb.days_remaining}</p>
+                    <p className="text-xs text-app-subtle mb-2">of {lb.days_allocated} days remaining</p>
+                    <div className="w-full bg-app-border-subtle rounded-full h-1.5">
                       <div
                         className="bg-blue-500 h-1.5 rounded-full transition-all"
                         style={{ width: `${Math.min(pct, 100)}%` }}
                       />
                     </div>
-                    <p className="text-xs text-gray-400 mt-1">{lb.days_used} used</p>
+                    <p className="text-xs text-app-subtle mt-1">{lb.days_used} used</p>
                   </div>
                 );
               })}
@@ -185,13 +185,13 @@ export default function EmployeeLeavePage() {
 
         {/* Requests list */}
         <div>
-          <h2 className="text-base font-semibold text-gray-700 mb-3">My Requests</h2>
+          <h2 className="text-base font-semibold text-app mb-3">My Requests</h2>
           {loading ? (
             <div className="flex justify-center py-12">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" />
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-app-accent" />
             </div>
           ) : requests.length === 0 ? (
-            <div className="bg-white rounded-xl border border-gray-100 p-8 text-center text-gray-400 text-sm">
+            <div className="bg-app-surface rounded-xl border border-app-border-subtle p-8 text-center text-app-subtle text-sm">
               No leave requests yet. Click <strong>Request Leave</strong> to get started.
             </div>
           ) : (
@@ -203,24 +203,24 @@ export default function EmployeeLeavePage() {
                   && !(lr.extensions || []).some(e => e.status === 'pending');
 
                 return (
-                  <div key={lr.id} className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+                  <div key={lr.id} className="bg-app-surface rounded-xl border border-app-border-subtle shadow-sm overflow-hidden">
                     <div className="px-4 py-4 flex flex-wrap items-start gap-3">
                       <div className="flex-1 min-w-0">
                         <div className="flex flex-wrap items-center gap-2 mb-1">
-                          <span className="font-semibold text-gray-900 capitalize">
+                          <span className="font-semibold text-app capitalize">
                             {formatLeaveLabel(lr.leave_type)}
                           </span>
                           <Badge variant={STATUS_VARIANT[lr.status] || 'neutral'}>
                             {lr.status.replace('_', ' ')}
                           </Badge>
                         </div>
-                        <p className="text-sm text-gray-500">
+                        <p className="text-sm text-app-muted">
                           {format(new Date(lr.start_date), 'd MMM yyyy')}
                           {' '}<ArrowRight size={12} className="inline" />{' '}
                           {format(new Date(lr.end_date), 'd MMM yyyy')}
                           {' · '}<strong>{lr.days_requested}</strong> working days
                         </p>
-                        <p className="text-xs text-gray-400 mt-0.5">{lr.description}</p>
+                        <p className="text-xs text-app-subtle mt-0.5">{lr.description}</p>
                         {lr.hr_note && (
                           <p className="text-xs mt-1 text-orange-600 bg-orange-50 rounded px-2 py-1 inline-block">
                             HR note: {lr.hr_note}
@@ -239,7 +239,7 @@ export default function EmployeeLeavePage() {
                         {canExtend && (
                           <button
                             onClick={() => { setExtModal(lr); setExtDays(''); setExtReason(''); setExtError(''); }}
-                            className="flex items-center gap-1.5 text-xs bg-blue-50 border border-blue-200 text-blue-700 hover:bg-blue-100 px-3 py-1.5 rounded-lg"
+                            className="flex items-center gap-1.5 text-xs bg-blue-50 border border-blue-200 text-app-nav-active-text hover:bg-blue-100 px-3 py-1.5 rounded-lg"
                           >
                             <CalendarCheck size={12} /> Request Extension
                           </button>
@@ -247,7 +247,7 @@ export default function EmployeeLeavePage() {
                         {(lr.extensions || []).length > 0 && (
                           <button
                             onClick={() => toggleExpand(lr.id)}
-                            className="flex items-center gap-1 text-xs text-gray-500 hover:text-gray-700"
+                            className="flex items-center gap-1 text-xs text-app-muted hover:text-app"
                           >
                             {isExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
                             {lr.extensions!.length} extension{lr.extensions!.length > 1 ? 's' : ''}
@@ -267,15 +267,15 @@ export default function EmployeeLeavePage() {
 
                     {/* Extension requests */}
                     {isExpanded && (lr.extensions || []).length > 0 && (
-                      <div className="px-4 pb-3 border-t border-gray-50 pt-3 space-y-2">
-                        <p className="text-xs font-semibold text-gray-500 uppercase">Extension Requests</p>
+                      <div className="px-4 pb-3 border-t border-app-border-subtle pt-3 space-y-2">
+                        <p className="text-xs font-semibold text-app-muted uppercase">Extension Requests</p>
                         {lr.extensions!.map(ext => (
-                          <div key={ext.id} className="text-xs bg-gray-50 rounded-lg px-3 py-2">
+                          <div key={ext.id} className="text-xs bg-app-page rounded-lg px-3 py-2">
                             <div className="flex items-center justify-between">
                               <span className="font-medium">+{ext.extra_days} days</span>
                               <Badge variant={STATUS_VARIANT[ext.status] || 'neutral'}>{ext.status}</Badge>
                             </div>
-                            <p className="text-gray-500 mt-0.5">{ext.reason}</p>
+                            <p className="text-app-muted mt-0.5">{ext.reason}</p>
                             {ext.hr_note && <p className="text-orange-600 mt-0.5">HR: {ext.hr_note}</p>}
                           </div>
                         ))}
@@ -296,12 +296,12 @@ export default function EmployeeLeavePage() {
             {formError && <div className="text-red-600 text-sm bg-red-50 rounded-lg px-3 py-2">{formError}</div>}
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Leave Type</label>
+              <label className="block text-sm font-medium text-app mb-1">Leave Type</label>
               <select
                 value={form.leave_type}
                 onChange={e => setForm({ ...form, leave_type: e.target.value })}
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-app-input-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-app-accent"
               >
                 <option value="">Select leave type…</option>
                 {balances.map(b => (
@@ -314,25 +314,25 @@ export default function EmployeeLeavePage() {
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
+                <label className="block text-sm font-medium text-app mb-1">Start Date</label>
                 <input
                   type="date"
                   value={form.start_date}
                   onChange={e => setForm({ ...form, start_date: e.target.value })}
                   required
                   min={today}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-app-input-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-app-accent"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">End Date</label>
+                <label className="block text-sm font-medium text-app mb-1">End Date</label>
                 <input
                   type="date"
                   value={form.end_date}
                   onChange={e => setForm({ ...form, end_date: e.target.value })}
                   required
                   min={form.start_date || today}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-app-input-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-app-accent"
                 />
               </div>
             </div>
@@ -342,7 +342,7 @@ export default function EmployeeLeavePage() {
               <div className={`text-sm rounded-lg px-3 py-2 ${
                 selectedBalance && workingDaysPreview > selectedBalance.days_remaining
                   ? 'bg-red-50 text-red-700'
-                  : 'bg-blue-50 text-blue-700'
+                  : 'bg-blue-50 text-app-nav-active-text'
               }`}>
                 {workingDaysPreview} working day{workingDaysPreview !== 1 ? 's' : ''} selected
                 {selectedBalance && (
@@ -354,21 +354,21 @@ export default function EmployeeLeavePage() {
             )}
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Reason / Description</label>
+              <label className="block text-sm font-medium text-app mb-1">Reason / Description</label>
               <textarea
                 value={form.description}
                 onChange={e => setForm({ ...form, description: e.target.value })}
                 required
                 rows={3}
                 placeholder="Describe the reason for your leave…"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                className="w-full px-3 py-2 border border-app-input-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-app-accent resize-none"
               />
             </div>
 
             <button
               type="submit"
               disabled={submitting || !form.leave_type || !form.start_date || !form.end_date || workingDaysPreview === 0}
-              className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300 text-white py-2.5 rounded-lg text-sm font-medium"
+              className="w-full bg-app-accent hover:bg-app-accent-hover disabled:bg-blue-300 text-white py-2.5 rounded-lg text-sm font-medium"
             >
               {submitting ? 'Submitting…' : 'Submit Request'}
             </button>
@@ -381,11 +381,11 @@ export default function EmployeeLeavePage() {
         <Modal title="Log Early Return" onClose={() => setEarlyModal(null)} size="sm">
           <form onSubmit={handleEarlyReturn} className="space-y-4">
             {earlyError && <div className="text-red-600 text-sm bg-red-50 rounded-lg px-3 py-2">{earlyError}</div>}
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-app-muted">
               Recording an early return will refund unused days to your balance.
             </p>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Actual Return Date</label>
+              <label className="block text-sm font-medium text-app mb-1">Actual Return Date</label>
               <input
                 type="date"
                 value={earlyDate}
@@ -393,18 +393,18 @@ export default function EmployeeLeavePage() {
                 required
                 min={earlyModal.start_date}
                 max={earlyModal.end_date}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-app-input-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-app-accent"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Reason for Early Return</label>
+              <label className="block text-sm font-medium text-app mb-1">Reason for Early Return</label>
               <textarea
                 value={earlyReason}
                 onChange={e => setEarlyReason(e.target.value)}
                 required
                 rows={3}
                 placeholder="Why are you returning early?"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                className="w-full px-3 py-2 border border-app-input-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-app-accent resize-none"
               />
             </div>
             <button type="submit"
@@ -420,12 +420,12 @@ export default function EmployeeLeavePage() {
         <Modal title="Request Leave Extension" onClose={() => setExtModal(null)} size="sm">
           <form onSubmit={handleExtension} className="space-y-4">
             {extError && <div className="text-red-600 text-sm bg-red-50 rounded-lg px-3 py-2">{extError}</div>}
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-app-muted">
               Request additional working days beyond your current end date
               ({format(new Date(extModal.end_date), 'd MMM yyyy')}).
             </p>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Extra Working Days</label>
+              <label className="block text-sm font-medium text-app mb-1">Extra Working Days</label>
               <input
                 type="number"
                 value={extDays}
@@ -434,22 +434,22 @@ export default function EmployeeLeavePage() {
                 min={1}
                 step={1}
                 placeholder="e.g. 5"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-app-input-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-app-accent"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Reason for Extension</label>
+              <label className="block text-sm font-medium text-app mb-1">Reason for Extension</label>
               <textarea
                 value={extReason}
                 onChange={e => setExtReason(e.target.value)}
                 required
                 rows={3}
                 placeholder="Explain why you need more time…"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                className="w-full px-3 py-2 border border-app-input-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-app-accent resize-none"
               />
             </div>
             <button type="submit"
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-lg text-sm font-medium">
+              className="w-full bg-app-accent hover:bg-app-accent-hover text-white py-2.5 rounded-lg text-sm font-medium">
               Submit Extension Request
             </button>
           </form>

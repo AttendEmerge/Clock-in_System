@@ -1,4 +1,4 @@
-# Clock-in System — Comprehensive System Documentation
+# Attendance Tracker — Comprehensive System Documentation
 
 > **Purpose of this document:** Give any developer (including the original author returning after a long break) everything they need to understand how the system works, how it is built, and how to take it from development to full production deployment.
 
@@ -27,7 +27,7 @@
 
 ## 1. High-Level Overview
 
-The Clock-in System is a full-stack web application that lets a company manage employee attendance. Employees clock in by scanning a rotating QR code or using a one-time token. GPS coordinates are captured from the employee's phone to verify they are at an approved location.
+Attendance Tracker is a full-stack web application that lets a company manage employee attendance. Employees clock in by scanning a rotating QR code or using a one-time token. GPS coordinates are captured from the employee's phone to verify they are at an approved location.
 
 **Who uses it:**
 

@@ -56,8 +56,8 @@ export default function HROvertimePage() {
     <Layout>
       <div className="space-y-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Overtime Requests</h1>
-          <p className="text-gray-500 text-sm mt-1">Review and approve supervisor-approved overtime requests</p>
+          <h1 className="text-2xl font-bold text-app">Overtime Requests</h1>
+          <p className="text-app-muted text-sm mt-1">Review and approve supervisor-approved overtime requests</p>
         </div>
 
         {msg && <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg text-sm">{msg} <button onClick={() => setMsg('')} className="ml-2">✕</button></div>}
@@ -67,32 +67,32 @@ export default function HROvertimePage() {
           {[['', 'All'], ['pending', 'Pending'], ['supervisor_approved', 'Ready for HR'], ['hr_approved', 'Approved'], ['rejected', 'Rejected']].map(([val, label]) => (
             <button key={val} onClick={() => setFilter(val)}
               className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors
-                ${filter === val ? 'bg-blue-600 text-white' : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'}`}>
+                ${filter === val ? 'bg-app-accent text-white' : 'bg-app-surface border border-app-border text-app-muted hover:bg-app-page'}`}>
               {label}
             </button>
           ))}
         </div>
 
-        <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+        <div className="bg-app-surface rounded-xl border border-app-border-subtle shadow-sm overflow-hidden">
           {loading ? (
-            <div className="flex items-center justify-center py-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" /></div>
+            <div className="flex items-center justify-center py-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-app-accent" /></div>
           ) : requests.length === 0 ? (
-            <p className="text-center text-gray-400 py-12">No requests found</p>
+            <p className="text-center text-app-subtle py-12">No requests found</p>
           ) : (
-            <div className="divide-y divide-gray-50">
+            <div className="divide-y divide-app-border-subtle">
               {requests.map(req => (
                 <div key={req.id} className="px-4 py-4">
                   <div className="flex items-start justify-between">
                     <div>
                       <div className="flex items-center gap-2 mb-1">
-                        <span className="font-medium text-gray-900">{req.employee_name}</span>
+                        <span className="font-medium text-app">{req.employee_name}</span>
                         <Badge variant={statusVariant(req.status)}>{req.status.replace(/_/g, ' ')}</Badge>
                         <Badge variant={req.overtime_type === 'double' ? 'warning' : 'neutral'}>
                           {req.overtime_type === 'double' ? 'Double OT' : 'Regular OT'}
                         </Badge>
                       </div>
-                      <p className="text-sm text-gray-700">{req.reason}</p>
-                      <p className="text-xs text-gray-400 mt-1">
+                      <p className="text-sm text-app">{req.reason}</p>
+                      <p className="text-xs text-app-subtle mt-1">
                         Date: {req.requested_date} · Supervisor: {req.supervisor_name || 'N/A'} · Submitted: {format(new Date(req.created_at), 'd MMM yyyy')}
                       </p>
                     </div>
@@ -116,14 +116,14 @@ export default function HROvertimePage() {
         <Modal title="Approve Overtime" onClose={() => { setTokenModal(null); setApproved(false); }} size="sm">
           {!approved ? (
             <div className="space-y-4">
-              <div className="bg-gray-50 rounded-lg p-4 text-sm space-y-1">
-                <div className="flex justify-between"><span className="text-gray-500">Employee</span><span className="font-medium">{tokenModal.employee_name}</span></div>
-                <div className="flex justify-between"><span className="text-gray-500">Date</span><span>{tokenModal.requested_date}</span></div>
-                <div className="flex justify-between"><span className="text-gray-500">Type</span><span>{tokenModal.overtime_type === 'double' ? 'Double overtime (off day)' : 'Regular overtime (workday)'}</span></div>
-                <div className="flex justify-between"><span className="text-gray-500">Reason</span><span className="text-right max-w-48">{tokenModal.reason}</span></div>
+              <div className="bg-app-page rounded-lg p-4 text-sm space-y-1">
+                <div className="flex justify-between"><span className="text-app-muted">Employee</span><span className="font-medium">{tokenModal.employee_name}</span></div>
+                <div className="flex justify-between"><span className="text-app-muted">Date</span><span>{tokenModal.requested_date}</span></div>
+                <div className="flex justify-between"><span className="text-app-muted">Type</span><span>{tokenModal.overtime_type === 'double' ? 'Double overtime (off day)' : 'Regular overtime (workday)'}</span></div>
+                <div className="flex justify-between"><span className="text-app-muted">Reason</span><span className="text-right max-w-48">{tokenModal.reason}</span></div>
               </div>
               {error && <div className="text-red-600 text-sm bg-red-50 rounded-lg px-3 py-2">{error}</div>}
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-app-muted">
                 Approving will automatically clock the employee in for their overtime session.
               </p>
               <button onClick={() => handleApproveOvertime(tokenModal)}
@@ -134,12 +134,12 @@ export default function HROvertimePage() {
           ) : (
             <div className="space-y-4 text-center">
               <CheckCircle2 size={48} className="text-green-500 mx-auto" />
-              <h3 className="text-lg font-semibold text-gray-900">Overtime Approved</h3>
-              <p className="text-sm text-gray-500">
+              <h3 className="text-lg font-semibold text-app">Overtime Approved</h3>
+              <p className="text-sm text-app-muted">
                 {approvedName} has been automatically clocked in for their overtime session.
               </p>
               <button onClick={() => { setTokenModal(null); setApproved(false); }}
-                className="w-full border border-gray-200 text-gray-600 py-2 rounded-lg text-sm">Done</button>
+                className="w-full border border-app-border text-app-muted py-2 rounded-lg text-sm">Done</button>
             </div>
           )}
         </Modal>

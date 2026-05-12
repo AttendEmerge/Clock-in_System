@@ -140,9 +140,9 @@ export function HREmployeesContent() {
   return (
     <div className="space-y-6">
         <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-gray-900">Employees</h1>
+          <h1 className="text-2xl font-bold text-app">Employees</h1>
           <button onClick={() => setCreateModal(true)}
-            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium">
+            className="flex items-center gap-2 bg-app-accent hover:bg-app-accent-hover text-white px-4 py-2 rounded-lg text-sm font-medium">
             <Plus size={16} /> Add Employee
           </button>
         </div>
@@ -151,69 +151,69 @@ export function HREmployeesContent() {
         {error && <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">{error} <button onClick={() => setError('')} className="ml-2">✕</button></div>}
 
         {/* Search & Filter */}
-        <div className="flex flex-wrap gap-3 bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
+        <div className="flex flex-wrap gap-3 bg-app-surface p-4 rounded-xl border border-app-border-subtle shadow-sm">
           <div className="relative flex-1 min-w-48">
-            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-app-subtle" />
             <input value={search} onChange={e => setSearch(e.target.value)} onKeyDown={e => e.key === 'Enter' && fetchData()}
               placeholder="Search by name or email..."
-              className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              className="w-full pl-9 pr-3 py-2 border border-app-input-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-app-accent" />
           </div>
           <select value={roleFilter} onChange={e => setRoleFilter(e.target.value)}
-            className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none">
+            className="border border-app-input-border rounded-lg px-3 py-2 text-sm focus:outline-none">
             <option value="">All Roles</option>
             <option value="employee">Employee</option>
             <option value="supervisor">Supervisor</option>
             <option value="hr">HR</option>
           </select>
           <button onClick={fetchData}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium">
+            className="bg-app-accent hover:bg-app-accent-hover text-white px-4 py-2 rounded-lg text-sm font-medium">
             Search
           </button>
         </div>
 
         {/* Table */}
-        <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+        <div className="bg-app-surface rounded-xl border border-app-border-subtle shadow-sm overflow-hidden">
           {loading ? (
-            <div className="flex items-center justify-center py-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" /></div>
+            <div className="flex items-center justify-center py-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-app-accent" /></div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
-                <thead className="bg-gray-50 border-b border-gray-100">
+                <thead className="bg-app-page border-b border-app-border-subtle">
                   <tr>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Name</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Email</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Role</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Department</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Actions</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-app-muted uppercase">Name</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-app-muted uppercase">Email</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-app-muted uppercase">Role</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-app-muted uppercase">Department</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-app-muted uppercase">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-50">
+                <tbody className="divide-y divide-app-border-subtle">
                   {users.map(u => (
-                    <tr key={u.id} className="hover:bg-gray-50">
-                      <td className="px-4 py-3 font-medium text-gray-900">{u.name}</td>
-                      <td className="px-4 py-3 text-gray-500">{u.email}</td>
+                    <tr key={u.id} className="hover:bg-app-page">
+                      <td className="px-4 py-3 font-medium text-app">{u.name}</td>
+                      <td className="px-4 py-3 text-app-muted">{u.email}</td>
                       <td className="px-4 py-3">
                         <Badge variant={u.role === 'hr' ? 'purple' : u.role === 'supervisor' ? 'info' : 'neutral'}>
                           {u.role}
                         </Badge>
                       </td>
-                      <td className="px-4 py-3 text-gray-500">{(u as any).department_name || '—'}</td>
+                      <td className="px-4 py-3 text-app-muted">{(u as any).department_name || '—'}</td>
                       <td className="px-4 py-3">
                         <div className="flex gap-1">
                           <button onClick={() => openEdit(u)} title="Edit"
-                            className="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded">
+                            className="p-1.5 text-app-subtle hover:text-app-accent hover:bg-blue-50 rounded">
                             <Pencil size={15} />
                           </button>
                           <button onClick={() => setPwModal(u)} title="Reset Password"
-                            className="p-1.5 text-gray-400 hover:text-orange-600 hover:bg-orange-50 rounded">
+                            className="p-1.5 text-app-subtle hover:text-orange-600 hover:bg-orange-50 rounded">
                             <KeyRound size={15} />
                           </button>
                           <button onClick={() => openLeaveModal(u)} title="Edit Leave"
-                            className="p-1.5 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded">
+                            className="p-1.5 text-app-subtle hover:text-green-600 hover:bg-green-50 rounded">
                             <Heart size={15} />
                           </button>
                           <button onClick={() => handleDelete(u)} title="Delete User"
-                            className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded">
+                            className="p-1.5 text-app-subtle hover:text-red-600 hover:bg-red-50 rounded">
                             <Trash2 size={15} />
                           </button>
                         </div>
@@ -222,7 +222,7 @@ export function HREmployeesContent() {
                   ))}
                 </tbody>
               </table>
-              {users.length === 0 && <p className="text-center text-gray-400 py-8">No employees found</p>}
+              {users.length === 0 && <p className="text-center text-app-subtle py-8">No employees found</p>}
             </div>
           )}
         </div>
@@ -233,50 +233,50 @@ export function HREmployeesContent() {
             {error && <div className="text-red-600 text-sm bg-red-50 rounded-lg px-3 py-2">{error}</div>}
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                <label className="block text-sm font-medium text-app mb-1">Full Name</label>
                 <input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                  className="w-full px-3 py-2 border border-app-input-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-app-accent" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                <label className="block text-sm font-medium text-app mb-1">Email</label>
                 <input type="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                  className="w-full px-3 py-2 border border-app-input-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-app-accent" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                <label className="block text-sm font-medium text-app mb-1">Password</label>
                 <input type="password" value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} required minLength={8}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                  className="w-full px-3 py-2 border border-app-input-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-app-accent" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Role</label>
+                <label className="block text-sm font-medium text-app mb-1">Role</label>
                 <select value={form.role} onChange={e => setForm({ ...form, role: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none">
+                  className="w-full px-3 py-2 border border-app-input-border rounded-lg text-sm focus:outline-none">
                   <option value="employee">Employee</option>
                   <option value="supervisor">Supervisor</option>
                   <option value="hr">HR</option>
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Gender</label>
+                <label className="block text-sm font-medium text-app mb-1">Gender</label>
                 <select value={form.gender} onChange={e => setForm({ ...form, gender: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none">
+                  className="w-full px-3 py-2 border border-app-input-border rounded-lg text-sm focus:outline-none">
                   <option value="other">Other / Unspecified</option>
                   <option value="female">Female</option>
                   <option value="male">Male</option>
                 </select>
               </div>
               <div className="col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1">Department</label>
+                <label className="block text-sm font-medium text-app mb-1">Department</label>
                 <select value={form.department_id} onChange={e => setForm({ ...form, department_id: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none">
+                  className="w-full px-3 py-2 border border-app-input-border rounded-lg text-sm focus:outline-none">
                   <option value="">No Department</option>
                   {departments.map(d => <option key={d.id} value={d.id}>{d.name}</option>)}
                 </select>
               </div>
             </div>
-            <p className="text-xs text-gray-400">Gender determines which leave types are seeded (maternity/paternity).</p>
+            <p className="text-xs text-app-subtle">Gender determines which leave types are seeded (maternity/paternity).</p>
             <button type="submit"
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-lg text-sm font-medium">
+              className="w-full bg-app-accent hover:bg-app-accent-hover text-white py-2.5 rounded-lg text-sm font-medium">
               Create Employee
             </button>
           </form>
@@ -289,36 +289,36 @@ export function HREmployeesContent() {
           <form onSubmit={handleEdit} className="space-y-4">
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                <label className="block text-sm font-medium text-app mb-1">Full Name</label>
                 <input value={editForm.name} onChange={e => setEditForm({ ...editForm, name: e.target.value })} required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                  className="w-full px-3 py-2 border border-app-input-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-app-accent" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                <label className="block text-sm font-medium text-app mb-1">Email</label>
                 <input type="email" value={editForm.email} onChange={e => setEditForm({ ...editForm, email: e.target.value })} required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                  className="w-full px-3 py-2 border border-app-input-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-app-accent" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Role</label>
+                <label className="block text-sm font-medium text-app mb-1">Role</label>
                 <select value={editForm.role} onChange={e => setEditForm({ ...editForm, role: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none">
+                  className="w-full px-3 py-2 border border-app-input-border rounded-lg text-sm focus:outline-none">
                   <option value="employee">Employee</option>
                   <option value="supervisor">Supervisor</option>
                   <option value="hr">HR</option>
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Department</label>
+                <label className="block text-sm font-medium text-app mb-1">Department</label>
                 <select value={editForm.department_id} onChange={e => setEditForm({ ...editForm, department_id: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none">
+                  className="w-full px-3 py-2 border border-app-input-border rounded-lg text-sm focus:outline-none">
                   <option value="">No Department</option>
                   {departments.map(d => <option key={d.id} value={d.id}>{d.name}</option>)}
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Gender</label>
+                <label className="block text-sm font-medium text-app mb-1">Gender</label>
                 <select value={editForm.gender} onChange={e => setEditForm({ ...editForm, gender: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none">
+                  className="w-full px-3 py-2 border border-app-input-border rounded-lg text-sm focus:outline-none">
                   <option value="other">Other / Unspecified</option>
                   <option value="female">Female</option>
                   <option value="male">Male</option>
@@ -328,11 +328,11 @@ export function HREmployeesContent() {
                 <input type="checkbox" id="is_active" checked={editForm.is_active}
                   onChange={e => setEditForm({ ...editForm, is_active: e.target.checked })}
                   className="rounded" />
-                <label htmlFor="is_active" className="text-sm text-gray-700">Active Account</label>
+                <label htmlFor="is_active" className="text-sm text-app">Active Account</label>
               </div>
             </div>
             <button type="submit"
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-lg text-sm font-medium">
+              className="w-full bg-app-accent hover:bg-app-accent-hover text-white py-2.5 rounded-lg text-sm font-medium">
               Save Changes
             </button>
           </form>
@@ -344,9 +344,9 @@ export function HREmployeesContent() {
         <Modal title={`Reset Password: ${pwModal.name}`} onClose={() => setPwModal(null)} size="sm">
           <form onSubmit={handleResetPassword} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">New Password</label>
+              <label className="block text-sm font-medium text-app mb-1">New Password</label>
               <input type="password" value={newPassword} onChange={e => setNewPassword(e.target.value)} required minLength={8}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                className="w-full px-3 py-2 border border-app-input-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-app-accent" />
             </div>
             <button type="submit"
               className="w-full bg-orange-600 hover:bg-orange-700 text-white py-2.5 rounded-lg text-sm font-medium">
@@ -361,14 +361,14 @@ export function HREmployeesContent() {
         <Modal title={`Leave Balance: ${leaveModal.name}`} onClose={() => setLeaveModal(null)} size="sm">
           <form onSubmit={handleLeaveUpdate} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Leave Type</label>
+              <label className="block text-sm font-medium text-app mb-1">Leave Type</label>
               <select
                 value={leaveForm.leave_type}
                 onChange={e => {
                   const sel = applicableLeaveTypes.find(t => t.leave_type === e.target.value);
                   setLeaveForm({ ...leaveForm, leave_type: e.target.value, days_allocated: sel?.default_days ?? leaveForm.days_allocated });
                 }}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-app-input-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-app-accent"
               >
                 <option value="">Select leave type…</option>
                 {applicableLeaveTypes.map(t => (
@@ -383,26 +383,26 @@ export function HREmployeesContent() {
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Days Allocated</label>
+                <label className="block text-sm font-medium text-app mb-1">Days Allocated</label>
                 <input type="number" value={leaveForm.days_allocated}
                   onChange={e => setLeaveForm({ ...leaveForm, days_allocated: Number(e.target.value) })}
                   min={0} step={0.5} required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                  className="w-full px-3 py-2 border border-app-input-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-app-accent" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Days Used</label>
+                <label className="block text-sm font-medium text-app mb-1">Days Used</label>
                 <input type="number" value={leaveForm.days_used}
                   onChange={e => setLeaveForm({ ...leaveForm, days_used: Number(e.target.value) })}
                   min={0} step={0.5} required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                  className="w-full px-3 py-2 border border-app-input-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-app-accent" />
               </div>
             </div>
-            <p className="text-xs text-gray-400">
+            <p className="text-xs text-app-subtle">
               Remaining = Allocated − Used = <strong>{Math.max(0, leaveForm.days_allocated - leaveForm.days_used)}</strong> days
             </p>
             <button type="submit"
               disabled={!leaveForm.leave_type}
-              className="w-full bg-green-600 hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white py-2.5 rounded-lg text-sm font-medium">
+              className="w-full bg-green-600 hover:bg-green-700 disabled:bg-app-border disabled:opacity-50 disabled:cursor-not-allowed text-white py-2.5 rounded-lg text-sm font-medium">
               Update Balance
             </button>
           </form>

@@ -48,10 +48,10 @@ export default function ForgotPasswordPage() {
           </p>
         </div>
 
-        <div className="bg-white/96 backdrop-blur rounded-2xl shadow-2xl border border-white/50 p-8">
+        <div className="bg-white/95 dark:bg-app-surface/95 backdrop-blur rounded-2xl shadow-2xl border border-white/50 dark:border-white/10 p-8">
           {submitted ? (
-            <div className="space-y-4 text-sm text-gray-700">
-              <div className="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg">
+            <div className="space-y-4 text-sm text-app">
+              <div className="bg-green-50 dark:bg-green-950/40 border border-green-200 dark:border-green-900 text-green-800 dark:text-green-300 px-4 py-3 rounded-lg">
                 If an account with that email exists, we&apos;ve sent password reset
                 instructions. Please check your inbox (and spam folder).
               </div>
@@ -63,13 +63,13 @@ export default function ForgotPasswordPage() {
           ) : (
             <form onSubmit={handleSubmit} className="space-y-5">
               {error && (
-                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+                <div className="bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900 text-red-700 dark:text-red-300 px-4 py-3 rounded-lg text-sm">
                   {error}
                 </div>
               )}
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                <label className="block text-sm font-medium text-app mb-1.5">
                   Email Address
                 </label>
                 <input
@@ -78,14 +78,14 @@ export default function ForgotPasswordPage() {
                   onChange={e => setEmail(e.target.value)}
                   required
                   placeholder="you@company.com"
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                  className="w-full px-4 py-2.5 border border-app-input-border rounded-lg bg-app-input focus:outline-none focus:ring-2 focus:ring-app-accent focus:border-transparent text-sm"
                 />
               </div>
 
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 disabled:opacity-70 text-white font-semibold py-2.5 rounded-lg transition-colors text-sm shadow-sm"
+                className="w-full bg-app-accent hover:bg-app-accent-hover disabled:opacity-50 text-white font-semibold py-2.5 rounded-lg transition-colors text-sm shadow-sm"
               >
                 {loading ? 'Sending reset link...' : 'Send reset link'}
               </button>

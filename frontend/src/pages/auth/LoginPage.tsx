@@ -42,21 +42,21 @@ export default function LoginPage() {
           <div className="inline-flex items-center justify-center w-16 h-16 bg-white/12 border border-white/15 rounded-2xl backdrop-blur-sm mb-4 shadow-lg shadow-black/10">
             <Clock size={32} className="text-white" />
           </div>
-          <h1 className="text-3xl font-bold text-white">ClockIn System</h1>
+          <h1 className="text-3xl font-bold text-white">Attendance Tracker</h1>
           <p className="text-[#d4eef1] mt-1">Sign in to your account</p>
         </div>
 
         {/* Card */}
-        <div className="bg-white/96 backdrop-blur rounded-2xl shadow-2xl border border-white/50 p-8">
+        <div className="bg-white/95 dark:bg-app-surface/95 backdrop-blur rounded-2xl shadow-2xl border border-white/50 dark:border-white/10 p-8">
           <form onSubmit={handleSubmit} className="space-y-5">
             {error && (
-              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+              <div className="bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900 text-red-700 dark:text-red-300 px-4 py-3 rounded-lg text-sm">
                 {error}
               </div>
             )}
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">
+              <label className="block text-sm font-medium text-app mb-1.5">
                 Email Address
               </label>
               <input
@@ -65,12 +65,12 @@ export default function LoginPage() {
                 onChange={e => setEmail(e.target.value)}
                 required
                 placeholder="you@company.com"
-                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                className="w-full px-4 py-2.5 border border-app-input-border rounded-lg bg-app-input focus:outline-none focus:ring-2 focus:ring-app-accent focus:border-transparent text-sm"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">
+              <label className="block text-sm font-medium text-app mb-1.5">
                 Password
               </label>
               <div className="relative">
@@ -80,12 +80,12 @@ export default function LoginPage() {
                   onChange={e => setPassword(e.target.value)}
                   required
                   placeholder="••••••••"
-                  className="w-full px-4 py-2.5 pr-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                  className="w-full px-4 py-2.5 pr-10 border border-app-input-border rounded-lg bg-app-input focus:outline-none focus:ring-2 focus:ring-app-accent focus:border-transparent text-sm"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPass(!showPass)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-app-subtle hover:text-app-muted"
                 >
                   {showPass ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
@@ -99,9 +99,9 @@ export default function LoginPage() {
                 id="remember_me"
                 checked={rememberMe}
                 onChange={e => setRememberMe(e.target.checked)}
-                className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 cursor-pointer"
+                className="w-4 h-4 text-app-accent border-app-input-border rounded focus:ring-app-accent cursor-pointer"
               />
-              <label htmlFor="remember_me" className="text-sm text-gray-600 cursor-pointer select-none">
+              <label htmlFor="remember_me" className="text-sm text-app-muted cursor-pointer select-none">
                 Keep me signed in for 30 days
               </label>
             </div>
@@ -109,7 +109,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 disabled:opacity-70 text-white font-semibold py-2.5 rounded-lg transition-colors text-sm shadow-sm"
+              className="w-full bg-app-accent hover:bg-app-accent-hover disabled:opacity-50 text-white font-semibold py-2.5 rounded-lg transition-colors text-sm shadow-sm"
             >
               {loading ? 'Signing in...' : 'Sign In'}
             </button>

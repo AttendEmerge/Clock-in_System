@@ -1,6 +1,41 @@
 @import "tailwindcss";
 @import "leaflet/dist/leaflet.css";
 
+/* Semantic app theme (light / .dark) — toggled via ThemeContext + localStorage */
+:root {
+  --app-page: #f9fafb;
+  --app-surface: #ffffff;
+  --app-border: #e5e7eb;
+  --app-border-subtle: #f3f4f6;
+  --app-text: #111827;
+  --app-text-muted: #4b5563;
+  --app-text-subtle: #6b7280;
+  --app-accent: #4c808a;
+  --app-accent-hover: #3d6a72;
+  --app-nav-active-bg: #e8f2f3;
+  --app-nav-active-text: #3d6a72;
+  --app-input-bg: #ffffff;
+  --app-input-border: #d1d5db;
+  --app-header-border: #e5e7eb;
+}
+
+.dark {
+  --app-page: #141416;
+  --app-surface: #1e1e22;
+  --app-border: #3f3f46;
+  --app-border-subtle: #27272a;
+  --app-text: #f4f4f5;
+  --app-text-muted: #a1a1aa;
+  --app-text-subtle: #71717a;
+  --app-accent: #8b5cf6;
+  --app-accent-hover: #7c3aed;
+  --app-nav-active-bg: rgba(139, 92, 246, 0.2);
+  --app-nav-active-text: #c4b5fd;
+  --app-input-bg: #252528;
+  --app-input-border: #52525b;
+  --app-header-border: #3f3f46;
+}
+
 @theme {
   /* Blue palette from #4C808A */
   --color-blue-50: #e8f2f3;
@@ -8,8 +43,8 @@
   --color-blue-200: #9bd6db;
   --color-blue-300: #6dc8cf;
   --color-blue-400: #5a9ea6;
-  --color-blue-500: #4C808A;
-  --color-blue-600: #4C808A;
+  --color-blue-500: #4c808a;
+  --color-blue-600: #4c808a;
   --color-blue-700: #3d6a72;
   --color-blue-800: #2e545a;
   --color-blue-900: #1f3e42;
@@ -19,11 +54,27 @@
   --color-green-200: #9a9db8;
   --color-green-300: #6b6f97;
   --color-green-400: #4d5274;
-  --color-green-500: #3B4167;
-  --color-green-600: #3B4167;
+  --color-green-500: #3b4167;
+  --color-green-600: #3b4167;
   --color-green-700: #30345a;
   --color-green-800: #25274d;
   --color-green-900: #1a1b40;
+
+  /* Semantic UI (switches with :root / .dark) */
+  --color-app-page: var(--app-page);
+  --color-app-surface: var(--app-surface);
+  --color-app-border: var(--app-border);
+  --color-app-border-subtle: var(--app-border-subtle);
+  --color-app: var(--app-text);
+  --color-app-muted: var(--app-text-muted);
+  --color-app-subtle: var(--app-text-subtle);
+  --color-app-accent: var(--app-accent);
+  --color-app-accent-hover: var(--app-accent-hover);
+  --color-app-nav-active-bg: var(--app-nav-active-bg);
+  --color-app-nav-active-text: var(--app-nav-active-text);
+  --color-app-input: var(--app-input-bg);
+  --color-app-input-border: var(--app-input-border);
+  --color-app-header-border: var(--app-header-border);
 }
 
 @layer base {
@@ -31,7 +82,7 @@
     box-sizing: border-box;
   }
   body {
-    @apply bg-gray-50 text-gray-900 antialiased;
+    @apply bg-app-page text-app antialiased;
     font-family: 'Inter', system-ui, sans-serif;
   }
 }
@@ -39,7 +90,7 @@
 .login-shell {
   position: relative;
   overflow: hidden;
-  background: linear-gradient(135deg, #4C808A 0%, #3d6a72 52%, #2e545a 100%);
+  background: linear-gradient(135deg, #4c808a 0%, #3d6a72 52%, #2e545a 100%);
 }
 
 .login-shell::before {
@@ -52,4 +103,15 @@
     linear-gradient(135deg, rgba(255, 255, 255, 0.08), transparent 55%);
   background-size: 24px 24px, 100% 100%;
   opacity: 0.7;
+}
+
+.dark .login-shell {
+  background: linear-gradient(135deg, #1c1917 0%, #2e1064 45%, #171717 100%);
+}
+
+.dark .login-shell::before {
+  background-image:
+    radial-gradient(rgba(167, 139, 250, 0.12) 1px, transparent 1px),
+    linear-gradient(135deg, rgba(139, 92, 246, 0.15), transparent 55%);
+  opacity: 0.85;
 }

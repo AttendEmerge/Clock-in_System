@@ -56,48 +56,48 @@ export function HRFlagsContent() {
     <>
       <div className="space-y-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Flagged Events</h1>
-          <p className="text-gray-500 text-sm mt-1">{total} event(s) requiring review</p>
+          <h1 className="text-2xl font-bold text-app">Flagged Events</h1>
+          <p className="text-app-muted text-sm mt-1">{total} event(s) requiring review</p>
         </div>
 
         {msg && <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg text-sm">{msg} <button onClick={() => setMsg('')} className="ml-2">✕</button></div>}
         {error && <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">{error} <button onClick={() => setError('')} className="ml-2">✕</button></div>}
 
-        <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+        <div className="bg-app-surface rounded-xl border border-app-border-subtle shadow-sm overflow-hidden">
           {loading ? (
-            <div className="flex items-center justify-center py-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" /></div>
+            <div className="flex items-center justify-center py-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-app-accent" /></div>
           ) : events.length === 0 ? (
             <div className="text-center py-12">
-              <Flag size={32} className="mx-auto text-gray-300 mb-2" />
-              <p className="text-gray-400">No flagged events — all clear!</p>
+              <Flag size={32} className="mx-auto text-app-subtle mb-2" />
+              <p className="text-app-subtle">No flagged events — all clear!</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
-                <thead className="bg-gray-50 border-b border-gray-100">
+                <thead className="bg-app-page border-b border-app-border-subtle">
                   <tr>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Employee</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Time</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Flag Reason</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Details</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Location</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Action</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-app-muted uppercase">Employee</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-app-muted uppercase">Time</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-app-muted uppercase">Flag Reason</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-app-muted uppercase">Details</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-app-muted uppercase">Location</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-app-muted uppercase">Action</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-50">
+                <tbody className="divide-y divide-app-border-subtle">
                   {events.map(ev => (
-                    <tr key={ev.id} className="hover:bg-gray-50">
+                    <tr key={ev.id} className="hover:bg-app-page">
                       <td className="px-4 py-3">
-                        <p className="font-medium text-gray-900">{ev.user_name}</p>
-                        <p className="text-xs text-gray-500">{ev.department_name || '—'}</p>
+                        <p className="font-medium text-app">{ev.user_name}</p>
+                        <p className="text-xs text-app-muted">{ev.department_name || '—'}</p>
                       </td>
-                      <td className="px-4 py-3 text-gray-700">{format(new Date(ev.event_timestamp), 'd MMM yyyy HH:mm')}</td>
+                      <td className="px-4 py-3 text-app">{format(new Date(ev.event_timestamp), 'd MMM yyyy HH:mm')}</td>
                       <td className="px-4 py-3">
                         {ev.flag_reason?.split(',').map(r => (
                           <Badge key={r} variant={r === 'LATE_ARRIVAL' ? 'warning' : 'danger'}>{r.replace('_', ' ')}</Badge>
                         ))}
                       </td>
-                      <td className="px-4 py-3 text-xs text-gray-600 max-w-xs">
+                      <td className="px-4 py-3 text-xs text-app-muted max-w-xs">
                         {ev.flag_reason?.includes('EARLY_DEPARTURE') && ev.early_departure_reason && (
                           <div className="bg-amber-50 border border-amber-100 rounded-lg px-2 py-1">
                             <p className="font-medium text-amber-800 mb-0.5">Early departure reason</p>
@@ -105,17 +105,17 @@ export function HRFlagsContent() {
                           </div>
                         )}
                       </td>
-                      <td className="px-4 py-3 text-gray-500 text-xs">
+                      <td className="px-4 py-3 text-app-muted text-xs">
                         {ev.latitude != null
                           ? <a href={`https://maps.google.com/?q=${ev.latitude},${ev.longitude}`} target="_blank" rel="noopener"
-                              className="flex items-center gap-1 text-blue-600 hover:underline">
+                              className="flex items-center gap-1 text-app-accent hover:underline">
                               <MapPin size={12} /> {Number(ev.latitude).toFixed(4)}, {Number(ev.longitude).toFixed(4)}
                             </a>
                           : 'No location'}
                       </td>
                       <td className="px-4 py-3">
                         <button onClick={() => { setUnflagModal(ev); setAddLocation(false); setLocationName(''); setRadius(200); }}
-                          className="bg-blue-50 hover:bg-blue-100 text-blue-700 px-3 py-1.5 rounded-lg text-xs font-medium">
+                          className="bg-blue-50 hover:bg-blue-100 text-app-nav-active-text px-3 py-1.5 rounded-lg text-xs font-medium">
                           Review & Unflag
                         </button>
                       </td>
@@ -131,10 +131,10 @@ export function HRFlagsContent() {
         {totalPages > 1 && (
           <div className="flex justify-center gap-2">
             <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}
-              className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm disabled:opacity-40">Previous</button>
-            <span className="px-3 py-1.5 text-sm text-gray-600">{page} / {totalPages}</span>
+              className="px-3 py-1.5 border border-app-input-border rounded-lg text-sm disabled:opacity-40">Previous</button>
+            <span className="px-3 py-1.5 text-sm text-app-muted">{page} / {totalPages}</span>
             <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages}
-              className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm disabled:opacity-40">Next</button>
+              className="px-3 py-1.5 border border-app-input-border rounded-lg text-sm disabled:opacity-40">Next</button>
           </div>
         )}
       </div>
@@ -142,17 +142,17 @@ export function HRFlagsContent() {
       {unflagModal && (
         <Modal title="Review Flagged Event" onClose={() => setUnflagModal(null)}>
           <form onSubmit={handleUnflag} className="space-y-5">
-            <div className="bg-gray-50 rounded-lg p-4 space-y-2 text-sm">
+            <div className="bg-app-page rounded-lg p-4 space-y-2 text-sm">
               <div className="flex justify-between">
-                <span className="text-gray-500">Employee</span>
+                <span className="text-app-muted">Employee</span>
                 <span className="font-medium">{unflagModal.user_name}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-500">Time</span>
+                <span className="text-app-muted">Time</span>
                 <span>{format(new Date(unflagModal.event_timestamp), 'd MMM yyyy HH:mm')}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-500">Flag</span>
+                <span className="text-app-muted">Flag</span>
                 <span>
                   {unflagModal.flag_reason?.split(',').map(r => (
                     <Badge key={r} variant={r === 'LATE_ARRIVAL' ? 'warning' : 'danger'}>
@@ -163,20 +163,20 @@ export function HRFlagsContent() {
               </div>
               {unflagModal.flag_reason?.includes('EARLY_DEPARTURE') && unflagModal.early_departure_reason && (
                 <div className="mt-1">
-                  <p className="text-gray-500">Early departure reason</p>
-                  <p className="mt-0.5 text-gray-800 break-words">
+                  <p className="text-app-muted">Early departure reason</p>
+                  <p className="mt-0.5 text-app break-words">
                     {unflagModal.early_departure_reason}
                   </p>
                 </div>
               )}
               {unflagModal.latitude != null && (
                 <div className="flex justify-between">
-                  <span className="text-gray-500">Location</span>
+                  <span className="text-app-muted">Location</span>
                   <a
                     href={`https://maps.google.com/?q=${unflagModal.latitude},${unflagModal.longitude}`}
                     target="_blank"
                     rel="noopener"
-                    className="text-blue-600 hover:underline text-xs"
+                    className="text-app-accent hover:underline text-xs"
                   >
                     View on Map
                   </a>
@@ -188,20 +188,20 @@ export function HRFlagsContent() {
               <div className="space-y-3">
                 <div className="flex items-center gap-2">
                   <input type="checkbox" id="addLoc" checked={addLocation} onChange={e => setAddLocation(e.target.checked)} className="rounded" />
-                  <label htmlFor="addLoc" className="text-sm text-gray-700">Add this location to the acceptable locations list</label>
+                  <label htmlFor="addLoc" className="text-sm text-app">Add this location to the acceptable locations list</label>
                 </div>
                 {addLocation && (
                   <div className="space-y-3 pl-6">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Location Name</label>
+                      <label className="block text-sm font-medium text-app mb-1">Location Name</label>
                       <input value={locationName} onChange={e => setLocationName(e.target.value)} required={addLocation}
                         placeholder="e.g. Client Site - Main Street"
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                        className="w-full px-3 py-2 border border-app-input-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-app-accent" />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Acceptable Radius (metres)</label>
+                      <label className="block text-sm font-medium text-app mb-1">Acceptable Radius (metres)</label>
                       <input type="number" value={radius} onChange={e => setRadius(Number(e.target.value))} min={50} max={5000}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                        className="w-full px-3 py-2 border border-app-input-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-app-accent" />
                     </div>
                   </div>
                 )}
@@ -209,7 +209,7 @@ export function HRFlagsContent() {
             )}
 
             <button type="submit"
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-lg text-sm font-medium">
+              className="w-full bg-app-accent hover:bg-app-accent-hover text-white py-2.5 rounded-lg text-sm font-medium">
               Confirm Unflag
             </button>
           </form>

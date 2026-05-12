@@ -1,6 +1,6 @@
-# Clock-in System
+# Attendance Tracker
 
-A full-stack employee clock-in system with QR scanning, GPS location validation, overtime management, and HR administration.
+A full-stack attendance tracking app with QR scanning, GPS location validation, overtime management, and HR administration.
 
 **New to the project?** See **[GETTING_STARTED.md](GETTING_STARTED.md)** for a full step-by-step setup guide (installing Node.js and MySQL, creating the database, configuring the backend, and running the app).
 

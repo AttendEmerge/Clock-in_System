@@ -65,12 +65,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="min-h-screen bg-app-page flex">
-      {/* Sidebar */}
+      {/* Sidebar: fixed to viewport so Profile/Sign out stay visible; main uses lg:pl-64 */}
       <aside
         className={`fixed inset-y-0 left-0 z-50 w-64 bg-app-surface border-r border-app-border transform transition-transform duration-200 ease-in-out
-          ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 lg:static lg:inset-0`}
+          ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`}
       >
-        <div className="flex flex-col h-full">
+        <div className="flex flex-col h-full min-h-0">
           {/* Logo */}
           <div className="flex items-center justify-between px-6 py-5 border-b border-app-border-subtle">
             <div className="flex items-center gap-2">
@@ -103,7 +103,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           </div>
 
           {/* Nav */}
-          <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
+          <nav className="flex-1 min-h-0 px-3 py-4 space-y-1 overflow-y-auto">
             {navItems.map(item => {
               const active =
                 location.pathname === item.href ||
@@ -126,8 +126,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             })}
           </nav>
 
-          {/* Profile + Logout */}
-          <div className="px-3 py-4 border-t border-app-border-subtle space-y-2">
+          {/* Profile + Logout — shrink-0 keeps footer at bottom of sidebar */}
+          <div className="shrink-0 px-3 py-4 border-t border-app-border-subtle space-y-2">
             <Link
               to="/account/profile"
               onClick={() => setSidebarOpen(false)}
@@ -159,8 +159,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         />
       )}
 
-      {/* Main content */}
-      <div className="flex-1 flex flex-col min-w-0">
+      {/* Main content — offset for fixed sidebar on lg+ */}
+      <div className="flex-1 flex flex-col min-w-0 lg:pl-64">
         {/* Top bar */}
         <header className="bg-app-surface border-b border-app-header-border px-4 py-3 flex items-center justify-between lg:px-6">
           <button

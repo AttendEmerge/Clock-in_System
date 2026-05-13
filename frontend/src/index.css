@@ -3,6 +3,7 @@
 
 /* Semantic app theme (light / .dark) — toggled via ThemeContext + localStorage */
 :root {
+  color-scheme: light;
   --app-page: #f9fafb;
   --app-surface: #ffffff;
   --app-border: #e5e7eb;
@@ -20,6 +21,7 @@
 }
 
 .dark {
+  color-scheme: dark;
   --app-page: #141416;
   --app-surface: #1e1e22;
   --app-border: #3f3f46;
@@ -84,6 +86,18 @@
   body {
     @apply bg-app-page text-app antialiased;
     font-family: 'Inter', system-ui, sans-serif;
+  }
+
+  /* Native <select>: match app theme so option popups are not light-bg + inherited light text in dark mode */
+  select {
+    background-color: var(--app-input-bg);
+    color: var(--app-text);
+    border-color: var(--app-input-border);
+  }
+
+  select option {
+    background-color: var(--app-surface);
+    color: var(--app-text);
   }
 }
 

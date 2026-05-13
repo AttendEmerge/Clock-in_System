@@ -587,6 +587,34 @@ async function getOvertimeRequests(req, res) {
   }
 }
 
+/**
+ * PATCH /hr/overtime-requests/:id — reject a supervisor-approved request (no token / no clock-in)
+ */
+async function rejectOvertimeRequest(req, res) {
+  const { id } = req.params;
+  const rejection_reason = req.body?.rejection_reason?.trim();
+  if (!rejection_reason) {
+    return res.status(400).json({ error: 'rejection_reason is required' });
+  }
+  try {
+    const [rows] = await pool.query('SELECT * FROM overtime_requests WHERE id = ?', [id]);
+    if (rows.length === 0) {
+      return res.status(404).json({ error: 'Overtime request not found' });
+    }
+    if (rows[0].status !== 'supervisor_approved') {
+      return res.status(400).json({ error: 'Only supervisor-approved requests can be rejected by HR' });
+    }
+    await pool.query(
+      `UPDATE overtime_requests SET status = 'rejected', hr_id = ?, hr_action_at = NOW(), rejection_reason = ? WHERE id = ?`,
+      [req.user.id, rejection_reason, id]
+    );
+    return res.json({ message: 'Overtime request rejected' });
+  } catch (err) {
+    console.error('Reject overtime request error:', err);
+    return res.status(500).json({ error: 'Server error' });
+  }
+}
+
 // ===================== CLOCK HISTORY =====================
 
 async function getEmployeeClockHistory(req, res) {
@@ -1427,7 +1455,7 @@ module.exports = {
   getFlaggedEvents, unflagEvent,
   getAcceptableLocations, addAcceptableLocation, updateAcceptableLocation, deleteAcceptableLocation,
   getWorkSchedule, updateWorkSchedule,
-  getOvertimeRequests,
+  getOvertimeRequests, rejectOvertimeRequest,
   getEmployeeClockHistory,
   getLeaveRequests, reviewLeaveRequest, hrLogEarlyReturn,
   getExtensionRequests, reviewExtensionRequest,

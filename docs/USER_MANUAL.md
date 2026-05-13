@@ -764,6 +764,12 @@ This page shows overtime requests that have been **supervisor-approved** and are
 
 **What happens next:** The employee is immediately clocked in as an overtime session (`is_overtime = true`). The overtime request status changes to `hr_approved`.
 
+**Rejecting overtime:**
+
+1. On a `supervisor_approved` row, click **Reject**.
+2. Enter a **reason** (required). This is stored for the employee and for audit.
+3. Confirm with **Reject request**. The status becomes `rejected`; no token is issued and the employee is **not** clocked in.
+
 ---
 
 ### 8.7 System Reports

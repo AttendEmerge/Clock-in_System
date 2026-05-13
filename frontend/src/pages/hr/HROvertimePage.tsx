@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import Layout from '../../components/Layout';
 import Badge from '../../components/Badge';
 import Modal from '../../components/Modal';
-import { getHROvertimeRequests, generateToken } from '../../services/api';
+import { getHROvertimeRequests, generateToken, rejectHROvertimeRequest } from '../../services/api';
 import type { OvertimeRequest } from '../../types';
 import { CheckCircle2 } from 'lucide-react';
 import { format } from 'date-fns';
@@ -12,6 +12,8 @@ export default function HROvertimePage() {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('supervisor_approved');
   const [tokenModal, setTokenModal] = useState<OvertimeRequest | null>(null);
+  const [rejectModal, setRejectModal] = useState<OvertimeRequest | null>(null);
+  const [rejectReason, setRejectReason] = useState('');
   const [approved, setApproved] = useState(false);
   const [approvedName, setApprovedName] = useState('');
   const [msg, setMsg] = useState('');
@@ -45,6 +47,21 @@ export default function HROvertimePage() {
     }
   }
 
+  async function handleRejectOvertime(e: React.FormEvent) {
+    e.preventDefault();
+    if (!rejectModal) return;
+    setError('');
+    try {
+      await rejectHROvertimeRequest(rejectModal.id, rejectReason.trim());
+      setMsg('Overtime request rejected.');
+      setRejectModal(null);
+      setRejectReason('');
+      fetchRequests();
+    } catch (err: any) {
+      setError(err.response?.data?.error || 'Failed to reject.');
+    }
+  }
+
   const statusVariant = (s: string) => {
     if (s === 'hr_approved') return 'success';
     if (s === 'supervisor_approved') return 'info';
@@ -57,7 +74,7 @@ export default function HROvertimePage() {
       <div className="space-y-6">
         <div>
           <h1 className="text-2xl font-bold text-app">Overtime Requests</h1>
-          <p className="text-app-muted text-sm mt-1">Review and approve supervisor-approved overtime requests</p>
+          <p className="text-app-muted text-sm mt-1">Review, approve, or reject supervisor-approved overtime requests</p>
         </div>
 
         {msg && <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg text-sm">{msg} <button onClick={() => setMsg('')} className="ml-2">✕</button></div>}
@@ -95,14 +112,25 @@ export default function HROvertimePage() {
                       <p className="text-xs text-app-subtle mt-1">
                         Date: {req.requested_date} · Supervisor: {req.supervisor_name || 'N/A'} · Submitted: {format(new Date(req.created_at), 'd MMM yyyy')}
                       </p>
+                      {req.rejection_reason && (
+                        <p className="text-xs text-red-600 mt-1">Rejected: {req.rejection_reason}</p>
+                      )}
                     </div>
                     {req.status === 'supervisor_approved' && (
-                      <button
-                        onClick={() => { setTokenModal(req); setApproved(false); setError(''); }}
-                        className="ml-4 flex-shrink-0 bg-green-600 hover:bg-green-700 text-white px-3 py-1.5 rounded-lg text-xs font-medium"
-                      >
-                        Approve & Clock In
-                      </button>
+                      <div className="flex gap-2 ml-4 flex-shrink-0">
+                        <button
+                          onClick={() => { setTokenModal(req); setApproved(false); setError(''); }}
+                          className="bg-green-600 hover:bg-green-700 text-white px-3 py-1.5 rounded-lg text-xs font-medium"
+                        >
+                          Approve & Clock In
+                        </button>
+                        <button
+                          onClick={() => { setRejectModal(req); setRejectReason(''); setError(''); }}
+                          className="bg-red-100 hover:bg-red-200 text-red-700 px-3 py-1.5 rounded-lg text-xs font-medium"
+                        >
+                          Reject
+                        </button>
+                      </div>
                     )}
                   </div>
                 </div>
@@ -111,6 +139,33 @@ export default function HROvertimePage() {
           )}
         </div>
       </div>
+
+      {rejectModal && (
+        <Modal title="Reject Overtime Request" onClose={() => setRejectModal(null)} size="sm">
+          <form onSubmit={handleRejectOvertime} className="space-y-4">
+            <p className="text-sm text-app-muted">
+              {rejectModal.employee_name} — {rejectModal.requested_date}
+            </p>
+            {error && <div className="text-red-600 text-sm bg-red-50 rounded-lg px-3 py-2">{error}</div>}
+            <div>
+              <label className="block text-sm font-medium text-app mb-1">Reason (required)</label>
+              <textarea
+                value={rejectReason}
+                onChange={e => setRejectReason(e.target.value)}
+                required
+                rows={3}
+                className="w-full px-3 py-2 border border-app-input-border rounded-lg text-sm resize-none focus:outline-none focus:ring-2 focus:ring-red-500"
+              />
+            </div>
+            <button
+              type="submit"
+              className="w-full bg-red-600 hover:bg-red-700 text-white py-2.5 rounded-lg text-sm font-medium"
+            >
+              Reject request
+            </button>
+          </form>
+        </Modal>
+      )}
 
       {tokenModal && (
         <Modal title="Approve Overtime" onClose={() => { setTokenModal(null); setApproved(false); }} size="sm">

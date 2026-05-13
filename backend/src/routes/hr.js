@@ -47,6 +47,7 @@ router.put('/schedule', hr.updateWorkSchedule);
 
 // Overtime requests
 router.get('/overtime-requests', hr.getOvertimeRequests);
+router.patch('/overtime-requests/:id', hr.rejectOvertimeRequest);
 
 // Clock history
 router.get('/clock-history', hr.getEmployeeClockHistory);

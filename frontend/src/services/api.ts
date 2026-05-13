@@ -179,6 +179,9 @@ export const updateWorkSchedule = (data: object) => api.put('/hr/schedule', data
 export const getHROvertimeRequests = (status?: string) =>
   api.get('/hr/overtime-requests', { params: { status } }).then(r => r.data);
 
+export const rejectHROvertimeRequest = (id: number, rejection_reason: string) =>
+  api.patch(`/hr/overtime-requests/${id}`, { rejection_reason }).then(r => r.data);
+
 export const getEmployeeClockHistory = (params?: object) =>
   api.get('/hr/clock-history', { params }).then(r => r.data);
 

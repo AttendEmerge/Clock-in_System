@@ -108,7 +108,7 @@ export default function SupervisorOvertimePage() {
                       </div>
                       <p className="text-sm text-app">{req.reason}</p>
                       <p className="text-xs text-app-subtle mt-1">
-                        Date: {req.requested_date} · Submitted: {format(new Date(req.created_at), 'd MMM yyyy')}
+                        Date: {format(new Date(req.requested_date + 'T12:00:00'), 'd MMM yyyy')} · Submitted: {format(new Date(req.created_at), 'd MMM yyyy')}
                       </p>
                       {req.rejection_reason && (
                         <p className="text-xs text-red-600 mt-1">Rejected: {req.rejection_reason}</p>

@@ -496,7 +496,7 @@ export default function EmployeeDashboardPage() {
                 {dashboard.overtime_requests.map(ot => (
                   <div key={ot.id} className="px-4 py-3 flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium text-app">{ot.requested_date}</p>
+                      <p className="text-sm font-medium text-app">{format(new Date(ot.requested_date + 'T12:00:00'), 'd MMM yyyy')}</p>
                       <p className="text-xs text-app-muted">{ot.reason}</p>
                     </div>
                     <Badge variant={

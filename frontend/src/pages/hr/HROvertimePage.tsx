@@ -110,7 +110,7 @@ export default function HROvertimePage() {
                       </div>
                       <p className="text-sm text-app">{req.reason}</p>
                       <p className="text-xs text-app-subtle mt-1">
-                        Date: {req.requested_date} · Supervisor: {req.supervisor_name || 'N/A'} · Submitted: {format(new Date(req.created_at), 'd MMM yyyy')}
+                        Date: {format(new Date(req.requested_date + 'T12:00:00'), 'd MMM yyyy')} · Supervisor: {req.supervisor_name || 'N/A'} · Submitted: {format(new Date(req.created_at), 'd MMM yyyy')}
                       </p>
                       {req.rejection_reason && (
                         <p className="text-xs text-red-600 mt-1">Rejected: {req.rejection_reason}</p>
@@ -144,7 +144,7 @@ export default function HROvertimePage() {
         <Modal title="Reject Overtime Request" onClose={() => setRejectModal(null)} size="sm">
           <form onSubmit={handleRejectOvertime} className="space-y-4">
             <p className="text-sm text-app-muted">
-              {rejectModal.employee_name} — {rejectModal.requested_date}
+              {rejectModal.employee_name} — {format(new Date(rejectModal.requested_date + 'T12:00:00'), 'd MMM yyyy')}
             </p>
             {error && <div className="text-red-600 text-sm bg-red-50 rounded-lg px-3 py-2">{error}</div>}
             <div>
@@ -173,7 +173,7 @@ export default function HROvertimePage() {
             <div className="space-y-4">
               <div className="bg-app-page rounded-lg p-4 text-sm space-y-1">
                 <div className="flex justify-between"><span className="text-app-muted">Employee</span><span className="font-medium">{tokenModal.employee_name}</span></div>
-                <div className="flex justify-between"><span className="text-app-muted">Date</span><span>{tokenModal.requested_date}</span></div>
+                <div className="flex justify-between"><span className="text-app-muted">Date</span><span>{format(new Date(tokenModal.requested_date + 'T12:00:00'), 'd MMM yyyy')}</span></div>
                 <div className="flex justify-between"><span className="text-app-muted">Type</span><span>{tokenModal.overtime_type === 'double' ? 'Double overtime (off day)' : 'Regular overtime (workday)'}</span></div>
                 <div className="flex justify-between"><span className="text-app-muted">Reason</span><span className="text-right max-w-48">{tokenModal.reason}</span></div>
               </div>

@@ -101,7 +101,7 @@ export default function SupervisorDashboard() {
                         <p className="font-medium text-app">{req.employee_name}</p>
                         <p className="text-sm text-app-muted">{req.employee_email}</p>
                         <p className="text-sm text-app mt-1">{req.reason}</p>
-                        <p className="text-xs text-app-subtle mt-1">Date: {req.requested_date}</p>
+                        <p className="text-xs text-app-subtle mt-1">Date: {format(new Date(req.requested_date + 'T12:00:00'), 'd MMM yyyy')}</p>
                       </div>
                       <div className="flex gap-2 ml-4">
                         <button

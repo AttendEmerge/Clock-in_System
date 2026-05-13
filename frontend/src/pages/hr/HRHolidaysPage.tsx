@@ -78,18 +78,9 @@ export function HRHolidaysContent() {
     }
   }
 
-  /** API may return DATE as ISO strings (e.g. from MySQL2 Date JSON). Never append T00:00:00 to a full ISO string. */
-  function toCalendarYmd(d: string): string {
-    if (!d || typeof d !== 'string') return '';
-    if (d.length >= 10 && /^\d{4}-\d{2}-\d{2}/.test(d)) return d.slice(0, 10);
-    const parsed = new Date(d);
-    if (Number.isNaN(parsed.getTime())) return '';
-    return parsed.toISOString().slice(0, 10);
-  }
-
   function formatDate(d: string) {
-    const ymd = toCalendarYmd(d);
-    if (!ymd) return '—';
+    if (!d) return '—';
+    const ymd = d.slice(0, 10);
     const dt = new Date(ymd + 'T12:00:00');
     if (Number.isNaN(dt.getTime())) return '—';
     return dt.toLocaleDateString('en-ZA', { year: 'numeric', month: 'long', day: 'numeric' });

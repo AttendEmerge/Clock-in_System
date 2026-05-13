@@ -80,7 +80,7 @@ export default function EmployeeOvertimePage() {
                 <div key={req.id} className="px-4 py-4 flex items-start justify-between">
                   <div>
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="font-medium text-app">{req.requested_date}</span>
+                      <span className="font-medium text-app">{format(new Date(req.requested_date + 'T12:00:00'), 'd MMM yyyy')}</span>
                       <Badge variant={statusVariant(req.status)}>{req.status.replace(/_/g, ' ')}</Badge>
                       <Badge variant={req.overtime_type === 'double' ? 'warning' : 'neutral'}>
                         {req.overtime_type === 'double' ? 'Double OT' : 'Regular OT'}

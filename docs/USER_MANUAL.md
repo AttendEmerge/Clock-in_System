@@ -390,7 +390,7 @@ Holiday dates are managed by HR. On a holiday:
 
 ## 7. Supervisor Guide
 
-Supervisors see all employee pages plus a supervisor-specific section.
+Supervisors have a **team dashboard** and **Team overtime** for approving their team's requests. For **your own** clock-in, leave, attendance history, and personal overtime, use the same pages as employees: open **My attendance**, **My Leave**, **Attendance history**, and **My overtime** in the sidebar (routes under `/employee/...`; see sections 5–6 of this manual for how those flows work).
 
 ### 7.1 Supervisor Dashboard
 
@@ -426,7 +426,7 @@ A grid of all your direct reports with their name, role, and department.
 
 ### 7.2 Reviewing Your Team's Overtime
 
-**Route:** `/supervisor/overtime` · **Sidebar label:** "Overtime Requests"
+**Route:** `/supervisor/overtime` · **Sidebar label:** "Team overtime"
 
 This page lists overtime requests from your team with filter buttons:
 

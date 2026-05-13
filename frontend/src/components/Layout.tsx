@@ -5,7 +5,7 @@ import {
   LayoutDashboard, Clock, Users,
   LogOut, Menu, X, UserCheck, User,
   ClipboardList, CalendarDays, BarChart2,
-  AlertTriangle,
+  AlertTriangle, History,
 } from 'lucide-react';
 
 interface NavItem {
@@ -28,9 +28,11 @@ function getNavItems(role: string): NavItem[] {
   if (role === 'supervisor') {
     return [
       { label: 'Dashboard', href: '/supervisor/dashboard', icon: <LayoutDashboard size={18} /> },
-      { label: 'My Team', href: '/supervisor/team', icon: <Users size={18} /> },
-      { label: 'Overtime Requests', href: '/supervisor/overtime', icon: <UserCheck size={18} /> },
+      { label: 'Team overtime', href: '/supervisor/overtime', icon: <UserCheck size={18} /> },
       { label: 'My attendance', href: '/employee/dashboard', icon: <Clock size={18} /> },
+      { label: 'My Leave', href: '/employee/leave', icon: <CalendarDays size={18} /> },
+      { label: 'Attendance history', href: '/employee/history', icon: <History size={18} /> },
+      { label: 'My overtime', href: '/employee/overtime', icon: <ClipboardList size={18} /> },
     ];
   }
   return [

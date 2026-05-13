@@ -79,7 +79,7 @@ function App() {
           } />
           <Route path="/supervisor/team" element={
             <ProtectedRoute allowedRoles={['supervisor', 'hr']}>
-              <SupervisorDashboard />
+              <Navigate to="/supervisor/dashboard" replace />
             </ProtectedRoute>
           } />
           <Route path="/supervisor/overtime" element={

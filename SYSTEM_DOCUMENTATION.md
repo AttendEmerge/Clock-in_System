@@ -683,9 +683,13 @@ Base URL: `/api`
 
 | Path | Page |
 |------|------|
-| `/supervisor/dashboard` | Supervisor dashboard |
-| `/supervisor/team` | Team view |
-| `/supervisor/overtime` | Overtime approvals |
+| `/supervisor/dashboard` | Supervisor dashboard (team KPIs, attendance, pending team OT, roster) |
+| `/supervisor/team` | Redirects to `/supervisor/dashboard` (legacy URL) |
+| `/supervisor/overtime` | Team overtime approvals |
+| `/employee/dashboard` | Personal clock-in / day view (also for supervisors) |
+| `/employee/leave` | Personal leave (supervisors use same flow as employees) |
+| `/employee/history` | Personal attendance history |
+| `/employee/overtime` | Personal overtime requests |
 
 **HR routes** (role: hr):
 

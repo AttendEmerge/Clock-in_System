@@ -131,8 +131,6 @@ export const requestLeaveExtension = (id: number, extra_days: number, reason: st
 // ── SUPERVISOR ────────────────────────────────────────────────────────────────
 export const getSupervisorDashboard = () => api.get('/supervisor/dashboard').then(r => r.data);
 
-export const getTeam = () => api.get('/supervisor/team').then(r => r.data);
-
 export const getSupervisorOvertimeRequests = (status?: string) =>
   api.get('/supervisor/overtime-requests', { params: { status } }).then(r => r.data);
 

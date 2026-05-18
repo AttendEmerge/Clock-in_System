@@ -1,9 +1,9 @@
 const LOGO_SRC = '/emerge-livelihoods-logo.png';
 
 const variantClasses = {
-  sidebar: 'h-9 w-auto max-w-[180px]',
-  auth: 'h-16 w-auto max-w-[280px]',
-  mobile: 'h-12 w-auto max-w-[220px]',
+  sidebar: 'h-[4.5rem] w-auto max-w-[360px]',
+  auth: 'h-32 w-auto max-w-[560px]',
+  mobile: 'h-24 w-auto max-w-[440px]',
 } as const;
 
 type BrandLogoVariant = keyof typeof variantClasses;

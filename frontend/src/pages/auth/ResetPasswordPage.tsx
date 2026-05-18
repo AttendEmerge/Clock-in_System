@@ -1,8 +1,9 @@
 import type { FormEvent } from 'react';
 import { useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import { Lock, ArrowLeft } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { resetPassword } from '../../services/api';
+import BrandLogo from '../../components/BrandLogo';
 
 export default function ResetPasswordPage() {
   const [searchParams] = useSearchParams();
@@ -64,9 +65,7 @@ export default function ResetPasswordPage() {
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.14),transparent_32%)]" />
       <div className="relative z-10 w-full max-w-md">
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-white/12 border border-white/15 rounded-2xl backdrop-blur-sm mb-4 shadow-lg shadow-black/10">
-            <Lock size={32} className="text-white" />
-          </div>
+          <BrandLogo variant="auth" className="mx-auto mb-4" />
           <h1 className="text-3xl font-bold text-white">Reset Password</h1>
           <p className="text-[#d4eef1] mt-1">
             Choose a new password for your account.

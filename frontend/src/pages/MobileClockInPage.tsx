@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { Clock, MapPin, LogIn, CheckCircle2, AlertCircle, Loader2, ShieldAlert } from 'lucide-react';
+import { MapPin, LogIn, CheckCircle2, AlertCircle, Loader2, ShieldAlert } from 'lucide-react';
+import BrandLogo from '../components/BrandLogo';
 
 /**
  * Mobile clock-in page — opened on the employee's phone after scanning the QR code.
@@ -286,9 +287,7 @@ export default function MobileClockInPage() {
       <div className="min-h-screen bg-gradient-to-b from-blue-600 to-blue-800 dark:from-zinc-950 dark:via-violet-950 dark:to-neutral-950 flex items-center justify-center p-4">
         <div className="w-full max-w-sm">
           <div className="text-center mb-6">
-            <div className="inline-flex items-center justify-center w-14 h-14 bg-white/15 dark:bg-white/10 rounded-2xl mb-3">
-              <Clock size={28} className="text-white" />
-            </div>
+            <BrandLogo variant="mobile" className="mx-auto mb-3" />
             <h1 className="text-2xl font-bold text-white">Clock In</h1>
             <p className="text-white/80 dark:text-violet-200/90 text-sm mt-1">Sign in to record your attendance</p>
           </div>
@@ -331,9 +330,7 @@ export default function MobileClockInPage() {
     <div className="min-h-screen bg-gradient-to-b from-blue-600 to-blue-800 dark:from-zinc-950 dark:via-violet-950 dark:to-neutral-950 flex items-center justify-center p-4">
       <div className="w-full max-w-sm">
         <div className="text-center mb-6">
-          <div className="inline-flex items-center justify-center w-14 h-14 bg-white/15 dark:bg-white/10 rounded-2xl mb-3">
-            <Clock size={28} className="text-white" />
-          </div>
+          <BrandLogo variant="mobile" className="mx-auto mb-3" />
           <h1 className="text-2xl font-bold text-white">Clock In</h1>
           <p className="text-white/80 dark:text-violet-200/90 text-sm mt-1">Welcome, {userName}</p>
         </div>

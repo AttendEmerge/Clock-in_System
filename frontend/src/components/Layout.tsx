@@ -7,6 +7,7 @@ import {
   ClipboardList, CalendarDays, BarChart2,
   AlertTriangle, History,
 } from 'lucide-react';
+import BrandLogo from './BrandLogo';
 
 interface NavItem {
   label: string;
@@ -75,12 +76,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <div className="flex flex-col h-full min-h-0">
           {/* Logo */}
           <div className="flex items-center justify-between px-6 py-5 border-b border-app-border-subtle">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-app-accent rounded-lg flex items-center justify-center">
-                <Clock size={18} className="text-white" />
-              </div>
-              <span className="font-bold text-app text-sm leading-tight">Attendance Tracker</span>
-            </div>
+            <BrandLogo variant="sidebar" />
             <button
               onClick={() => setSidebarOpen(false)}
               className="lg:hidden text-app-muted hover:text-app p-1"

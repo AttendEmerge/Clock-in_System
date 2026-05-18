@@ -47,7 +47,7 @@ function getTransporter() {
 
 async function sendViaResend({ to, subject, html, text }) {
   const apiKey = process.env.RESEND_API_KEY;
-  const from = process.env.RESEND_FROM_EMAIL || process.env.SMTP_FROM_EMAIL || 'Attendance Tracker <onboarding@resend.dev>';
+  const from = process.env.RESEND_FROM_EMAIL || process.env.SMTP_FROM_EMAIL || 'Emerge Livelihoods <onboarding@resend.dev>';
   const res = await fetch('https://api.resend.com/emails', {
     method: 'POST',
     headers: {
@@ -93,11 +93,11 @@ async function sendEmail({ to, subject, html, text }) {
 }
 
 async function sendPasswordResetEmail(user, resetLink) {
-  const subject = 'Attendance Tracker — Password Reset';
+  const subject = 'Emerge Livelihoods — Password Reset';
   const text = [
     `Hello ${user.name || 'there'},`,
     '',
-    'We received a request to reset the password for your Attendance Tracker account.',
+    'We received a request to reset the password for your Emerge Livelihoods account.',
     'If you made this request, click the link below to choose a new password:',
     '',
     resetLink,
@@ -107,7 +107,7 @@ async function sendPasswordResetEmail(user, resetLink) {
 
   const html = `
     <p>Hello ${user.name || 'there'},</p>
-    <p>We received a request to reset the password for your <strong>Attendance Tracker</strong> account.</p>
+    <p>We received a request to reset the password for your <strong>Emerge Livelihoods</strong> account.</p>
     <p>If you made this request, click the button below to choose a new password:</p>
     <p><a href="${resetLink}" style="display:inline-block;padding:10px 16px;background:#2563eb;color:#ffffff;text-decoration:none;border-radius:4px;">Reset Password</a></p>
     <p>Or copy and paste this link into your browser:</p>

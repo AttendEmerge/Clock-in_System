@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Clock, Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff } from 'lucide-react';
 import { login as apiLogin } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
+import BrandLogo from '../../components/BrandLogo';
 
 export default function LoginPage() {
   const navigate  = useNavigate();
@@ -39,10 +40,7 @@ export default function LoginPage() {
       <div className="relative z-10 w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-white/12 border border-white/15 rounded-2xl backdrop-blur-sm mb-4 shadow-lg shadow-black/10">
-            <Clock size={32} className="text-white" />
-          </div>
-          <h1 className="text-3xl font-bold text-white">Attendance Tracker</h1>
+          <BrandLogo variant="auth" className="mx-auto mb-4" />
           <p className="text-[#d4eef1] mt-1">Sign in to your account</p>
         </div>
 

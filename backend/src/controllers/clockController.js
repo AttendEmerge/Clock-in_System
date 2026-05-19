@@ -5,6 +5,7 @@ const { validateAndConsumeToken } = require('../services/tokenService');
 const { evaluateClockInFlags } = require('../services/flagService');
 const { getHolidayDatesForYear } = require('./hrController');
 const { isEarlyDepartureInTz, getPartsInTz, getOffsetMinutes, APP_TIMEZONE } = require('../utils/timezone');
+const { getPublicAppOrigin } = require('../utils/appOrigin');
 
 /** Re-enable hour for regular clock-in after end of day (org local time) */
 const REGULAR_CLOCKIN_REOPEN_HOUR = 6;
@@ -45,19 +46,7 @@ async function isRegularClockInBlocked(userId) {
 async function getQRSession(req, res) {
   try {
     const session = await getCurrentQRSession();
-    // Derive the origin the browser actually used so the QR URL is reachable
-    // from phones on the same network. The Vite proxy rewrites the Host header,
-    // so we prefer Origin / Referer which preserve the real address.
-    let origin = process.env.FRONTEND_URL;
-    if (!origin && req.headers.origin) {
-      origin = req.headers.origin.replace(/\/$/, '');
-    }
-    if (!origin && req.headers.referer) {
-      try { const u = new URL(req.headers.referer); origin = u.origin; } catch {}
-    }
-    if (!origin) {
-      origin = `${req.protocol}://${req.hostname}:5173`;
-    }
+    const origin = getPublicAppOrigin(req);
     const mobileUrl = `${origin}/mobile?t=${session.token}`;
     const qrDataUrl = await QRCode.toDataURL(mobileUrl, { width: 300, margin: 2 });
     return res.json({

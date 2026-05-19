@@ -100,7 +100,7 @@ After running the seed file:
 | `QR_ROTATION_MINUTES` | How often QR rotates (default: 5) |
 | `TOKEN_EXPIRY_MINUTES` | One-time token expiry (default: 60) |
 | `APP_TIMEZONE` | Organization timezone for auto clock-out (e.g. `Africa/Blantyre` for Malawi; default: UTC) |
-| `FRONTEND_URL` | Frontend origin for CORS and links in emails (default: http://localhost:5173) |
+| `FRONTEND_URL` | **Required on Render** — public app URL for CORS, password-reset emails, and QR links (e.g. `https://attend-39qi.onrender.com`). Unset in local dev uses Origin or `http://localhost:5173`. |
 | `RESEND_API_KEY` | (Recommended on Render) Resend.com API key for password-reset emails; avoids blocked SMTP ports. |
 | `RESEND_FROM_EMAIL` | Optional. From address for Resend (e.g. `Clock-in <onboarding@resend.dev>`). |
 | `SMTP_HOST` / `SMTP_PORT` / `SMTP_SECURE` | Alternative: SMTP server for emails (often blocked on Render — use Resend instead). |

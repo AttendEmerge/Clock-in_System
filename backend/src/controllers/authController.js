@@ -4,6 +4,7 @@ const crypto = require('crypto');
 const pool = require('../db/pool');
 const { generateOneTimeToken, validateAndConsumeToken } = require('../services/tokenService');
 const { sendPasswordResetEmail } = require('../services/emailService');
+const { getPublicAppOrigin } = require('../utils/appOrigin');
 
 const ACCESS_EXPIRES = process.env.JWT_EXPIRES_IN || '1h';
 const REMEMBER_DAYS  = 30;
@@ -185,22 +186,7 @@ async function forgotPassword(req, res) {
       null
     );
 
-    // Derive frontend origin for the reset link.
-    let origin = process.env.FRONTEND_URL;
-    if (!origin && req.headers.origin) {
-      origin = req.headers.origin.replace(/\/$/, '');
-    }
-    if (!origin && req.headers.referer) {
-      try {
-        const u = new URL(req.headers.referer);
-        origin = u.origin;
-      } catch {
-        // ignore
-      }
-    }
-    if (!origin) {
-      origin = `${req.protocol}://${req.hostname}:5173`;
-    }
+    const origin = getPublicAppOrigin(req);
 
     const encodedEmail = encodeURIComponent(user.email);
     const encodedToken = encodeURIComponent(tokenRecord.token);

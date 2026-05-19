@@ -8,6 +8,10 @@ services:
       cd ../backend && npm install --production
     startCommand: node backend/server.js
     envVars:
+      # Set in Render Dashboard (no trailing slash). Required for password-reset
+      # and QR links — e.g. https://attend-39qi.onrender.com
+      - key: FRONTEND_URL
+        sync: false
       - key: NODE_ENV
         value: production
       - key: DB_HOST
